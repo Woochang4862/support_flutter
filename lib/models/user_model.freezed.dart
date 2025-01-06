@@ -20,8 +20,11 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$UserModel {
-  String get message => throw _privateConstructorUsedError;
+  int? get statusCode => throw _privateConstructorUsedError;
+  String get statusMessage => throw _privateConstructorUsedError;
+  String? get responseTime => throw _privateConstructorUsedError;
   LoginData get data => throw _privateConstructorUsedError;
+  String? get code => throw _privateConstructorUsedError;
 
   /// Serializes this UserModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -38,7 +41,12 @@ abstract class $UserModelCopyWith<$Res> {
   factory $UserModelCopyWith(UserModel value, $Res Function(UserModel) then) =
       _$UserModelCopyWithImpl<$Res, UserModel>;
   @useResult
-  $Res call({String message, LoginData data});
+  $Res call(
+      {int? statusCode,
+      String statusMessage,
+      String? responseTime,
+      LoginData data,
+      String? code});
 
   $LoginDataCopyWith<$Res> get data;
 }
@@ -58,18 +66,33 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? message = null,
+    Object? statusCode = freezed,
+    Object? statusMessage = null,
+    Object? responseTime = freezed,
     Object? data = null,
+    Object? code = freezed,
   }) {
     return _then(_value.copyWith(
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
+      statusCode: freezed == statusCode
+          ? _value.statusCode
+          : statusCode // ignore: cast_nullable_to_non_nullable
+              as int?,
+      statusMessage: null == statusMessage
+          ? _value.statusMessage
+          : statusMessage // ignore: cast_nullable_to_non_nullable
               as String,
+      responseTime: freezed == responseTime
+          ? _value.responseTime
+          : responseTime // ignore: cast_nullable_to_non_nullable
+              as String?,
       data: null == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
               as LoginData,
+      code: freezed == code
+          ? _value.code
+          : code // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 
@@ -92,7 +115,12 @@ abstract class _$$UserModelImplCopyWith<$Res>
       __$$UserModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String message, LoginData data});
+  $Res call(
+      {int? statusCode,
+      String statusMessage,
+      String? responseTime,
+      LoginData data,
+      String? code});
 
   @override
   $LoginDataCopyWith<$Res> get data;
@@ -111,18 +139,33 @@ class __$$UserModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? message = null,
+    Object? statusCode = freezed,
+    Object? statusMessage = null,
+    Object? responseTime = freezed,
     Object? data = null,
+    Object? code = freezed,
   }) {
     return _then(_$UserModelImpl(
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
+      statusCode: freezed == statusCode
+          ? _value.statusCode
+          : statusCode // ignore: cast_nullable_to_non_nullable
+              as int?,
+      statusMessage: null == statusMessage
+          ? _value.statusMessage
+          : statusMessage // ignore: cast_nullable_to_non_nullable
               as String,
+      responseTime: freezed == responseTime
+          ? _value.responseTime
+          : responseTime // ignore: cast_nullable_to_non_nullable
+              as String?,
       data: null == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
               as LoginData,
+      code: freezed == code
+          ? _value.code
+          : code // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -131,19 +174,30 @@ class __$$UserModelImplCopyWithImpl<$Res>
 
 @JsonSerializable(explicitToJson: true)
 class _$UserModelImpl implements _UserModel {
-  const _$UserModelImpl({required this.message, required this.data});
+  const _$UserModelImpl(
+      {this.statusCode,
+      required this.statusMessage,
+      this.responseTime,
+      required this.data,
+      this.code});
 
   factory _$UserModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserModelImplFromJson(json);
 
   @override
-  final String message;
+  final int? statusCode;
+  @override
+  final String statusMessage;
+  @override
+  final String? responseTime;
   @override
   final LoginData data;
+  @override
+  final String? code;
 
   @override
   String toString() {
-    return 'UserModel(message: $message, data: $data)';
+    return 'UserModel(statusCode: $statusCode, statusMessage: $statusMessage, responseTime: $responseTime, data: $data, code: $code)';
   }
 
   @override
@@ -151,13 +205,20 @@ class _$UserModelImpl implements _UserModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$UserModelImpl &&
-            (identical(other.message, message) || other.message == message) &&
-            (identical(other.data, data) || other.data == data));
+            (identical(other.statusCode, statusCode) ||
+                other.statusCode == statusCode) &&
+            (identical(other.statusMessage, statusMessage) ||
+                other.statusMessage == statusMessage) &&
+            (identical(other.responseTime, responseTime) ||
+                other.responseTime == responseTime) &&
+            (identical(other.data, data) || other.data == data) &&
+            (identical(other.code, code) || other.code == code));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, message, data);
+  int get hashCode => Object.hash(
+      runtimeType, statusCode, statusMessage, responseTime, data, code);
 
   /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
@@ -177,16 +238,25 @@ class _$UserModelImpl implements _UserModel {
 
 abstract class _UserModel implements UserModel {
   const factory _UserModel(
-      {required final String message,
-      required final LoginData data}) = _$UserModelImpl;
+      {final int? statusCode,
+      required final String statusMessage,
+      final String? responseTime,
+      required final LoginData data,
+      final String? code}) = _$UserModelImpl;
 
   factory _UserModel.fromJson(Map<String, dynamic> json) =
       _$UserModelImpl.fromJson;
 
   @override
-  String get message;
+  int? get statusCode;
+  @override
+  String get statusMessage;
+  @override
+  String? get responseTime;
   @override
   LoginData get data;
+  @override
+  String? get code;
 
   /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
@@ -370,11 +440,10 @@ UserModelError _$UserModelErrorFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$UserModelError {
-  String get message => throw _privateConstructorUsedError;
+  int? get statusCode => throw _privateConstructorUsedError;
+  String get statusMessage => throw _privateConstructorUsedError;
   String? get code => throw _privateConstructorUsedError;
-  String? get exception => throw _privateConstructorUsedError;
-  String? get error => throw _privateConstructorUsedError;
-  int? get status => throw _privateConstructorUsedError;
+  String? get responseTime => throw _privateConstructorUsedError;
 
   /// Serializes this UserModelError to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -393,11 +462,10 @@ abstract class $UserModelErrorCopyWith<$Res> {
       _$UserModelErrorCopyWithImpl<$Res, UserModelError>;
   @useResult
   $Res call(
-      {String message,
+      {int? statusCode,
+      String statusMessage,
       String? code,
-      String? exception,
-      String? error,
-      int? status});
+      String? responseTime});
 }
 
 /// @nodoc
@@ -415,33 +483,28 @@ class _$UserModelErrorCopyWithImpl<$Res, $Val extends UserModelError>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? message = null,
+    Object? statusCode = freezed,
+    Object? statusMessage = null,
     Object? code = freezed,
-    Object? exception = freezed,
-    Object? error = freezed,
-    Object? status = freezed,
+    Object? responseTime = freezed,
   }) {
     return _then(_value.copyWith(
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
+      statusCode: freezed == statusCode
+          ? _value.statusCode
+          : statusCode // ignore: cast_nullable_to_non_nullable
+              as int?,
+      statusMessage: null == statusMessage
+          ? _value.statusMessage
+          : statusMessage // ignore: cast_nullable_to_non_nullable
               as String,
       code: freezed == code
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
               as String?,
-      exception: freezed == exception
-          ? _value.exception
-          : exception // ignore: cast_nullable_to_non_nullable
+      responseTime: freezed == responseTime
+          ? _value.responseTime
+          : responseTime // ignore: cast_nullable_to_non_nullable
               as String?,
-      error: freezed == error
-          ? _value.error
-          : error // ignore: cast_nullable_to_non_nullable
-              as String?,
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as int?,
     ) as $Val);
   }
 }
@@ -455,11 +518,10 @@ abstract class _$$UserModelErrorImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String message,
+      {int? statusCode,
+      String statusMessage,
       String? code,
-      String? exception,
-      String? error,
-      int? status});
+      String? responseTime});
 }
 
 /// @nodoc
@@ -475,64 +537,57 @@ class __$$UserModelErrorImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? message = null,
+    Object? statusCode = freezed,
+    Object? statusMessage = null,
     Object? code = freezed,
-    Object? exception = freezed,
-    Object? error = freezed,
-    Object? status = freezed,
+    Object? responseTime = freezed,
   }) {
     return _then(_$UserModelErrorImpl(
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
+      statusCode: freezed == statusCode
+          ? _value.statusCode
+          : statusCode // ignore: cast_nullable_to_non_nullable
+              as int?,
+      statusMessage: null == statusMessage
+          ? _value.statusMessage
+          : statusMessage // ignore: cast_nullable_to_non_nullable
               as String,
       code: freezed == code
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
               as String?,
-      exception: freezed == exception
-          ? _value.exception
-          : exception // ignore: cast_nullable_to_non_nullable
+      responseTime: freezed == responseTime
+          ? _value.responseTime
+          : responseTime // ignore: cast_nullable_to_non_nullable
               as String?,
-      error: freezed == error
-          ? _value.error
-          : error // ignore: cast_nullable_to_non_nullable
-              as String?,
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as int?,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$UserModelErrorImpl implements _UserModelError {
+class _$UserModelErrorImpl extends _UserModelError {
   _$UserModelErrorImpl(
-      {required this.message,
+      {this.statusCode,
+      required this.statusMessage,
       this.code,
-      this.exception,
-      this.error,
-      this.status});
+      this.responseTime})
+      : super._();
 
   factory _$UserModelErrorImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserModelErrorImplFromJson(json);
 
   @override
-  final String message;
+  final int? statusCode;
+  @override
+  final String statusMessage;
   @override
   final String? code;
   @override
-  final String? exception;
-  @override
-  final String? error;
-  @override
-  final int? status;
+  final String? responseTime;
 
   @override
   String toString() {
-    return 'UserModelError(message: $message, code: $code, exception: $exception, error: $error, status: $status)';
+    return 'UserModelError(statusCode: $statusCode, statusMessage: $statusMessage, code: $code, responseTime: $responseTime)';
   }
 
   @override
@@ -540,18 +595,19 @@ class _$UserModelErrorImpl implements _UserModelError {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$UserModelErrorImpl &&
-            (identical(other.message, message) || other.message == message) &&
+            (identical(other.statusCode, statusCode) ||
+                other.statusCode == statusCode) &&
+            (identical(other.statusMessage, statusMessage) ||
+                other.statusMessage == statusMessage) &&
             (identical(other.code, code) || other.code == code) &&
-            (identical(other.exception, exception) ||
-                other.exception == exception) &&
-            (identical(other.error, error) || other.error == error) &&
-            (identical(other.status, status) || other.status == status));
+            (identical(other.responseTime, responseTime) ||
+                other.responseTime == responseTime));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, message, code, exception, error, status);
+      Object.hash(runtimeType, statusCode, statusMessage, code, responseTime);
 
   /// Create a copy of UserModelError
   /// with the given fields replaced by the non-null parameter values.
@@ -570,27 +626,25 @@ class _$UserModelErrorImpl implements _UserModelError {
   }
 }
 
-abstract class _UserModelError implements UserModelError {
+abstract class _UserModelError extends UserModelError {
   factory _UserModelError(
-      {required final String message,
+      {final int? statusCode,
+      required final String statusMessage,
       final String? code,
-      final String? exception,
-      final String? error,
-      final int? status}) = _$UserModelErrorImpl;
+      final String? responseTime}) = _$UserModelErrorImpl;
+  _UserModelError._() : super._();
 
   factory _UserModelError.fromJson(Map<String, dynamic> json) =
       _$UserModelErrorImpl.fromJson;
 
   @override
-  String get message;
+  int? get statusCode;
+  @override
+  String get statusMessage;
   @override
   String? get code;
   @override
-  String? get exception;
-  @override
-  String? get error;
-  @override
-  int? get status;
+  String? get responseTime;
 
   /// Create a copy of UserModelError
   /// with the given fields replaced by the non-null parameter values.

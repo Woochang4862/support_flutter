@@ -5,42 +5,45 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'user_model.freezed.dart';
 part 'user_model.g.dart';
 
-abstract class UserModelBase {}
-
 @freezed
-class UserModel extends UserModelBase with _$UserModel {
+class UserModel with _$UserModel {
   @JsonSerializable(explicitToJson: true)
   const factory UserModel({
-    required String message,
-     required LoginData data,
+    int? statusCode,
+    required String statusMessage,
+    String? responseTime,
+    required LoginData data,
+    String? code,
   }) = _UserModel;
 
-  factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
+  factory UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
 }
 
 @freezed
 class LoginData with _$LoginData {
-
   factory LoginData({
     required String accessToken,
     required String refreshToken,
   }) = _LoginData;
 
-  factory LoginData.fromJson(Map<String, dynamic> json) => _$LoginDataFromJson(json);
+  factory LoginData.fromJson(Map<String, dynamic> json) =>
+      _$LoginDataFromJson(json);
 }
 
 @freezed
-class UserModelError extends UserModelBase with _$UserModelError implements Exception {
-
+class UserModelError with _$UserModelError implements Error {
+  const UserModelError._();
   factory UserModelError({
-    required String message,
+    int? statusCode,
+    required String statusMessage,
     String? code,
-    String? exception,
-    String? error,
-    int? status,
+    String? responseTime,
   }) = _UserModelError;
 
-  factory UserModelError.fromJson(Map<String, dynamic> json) => _$UserModelErrorFromJson(json);
-}
+  factory UserModelError.fromJson(Map<String, dynamic> json) =>
+      _$UserModelErrorFromJson(json);
 
-class UserModelLoading extends UserModelBase {}
+  @override
+  StackTrace get stackTrace => StackTrace.fromString(toString());
+}

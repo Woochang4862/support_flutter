@@ -38,9 +38,11 @@ dependencies:
 
   #UI
   flutter_screenutil: ^5.9.3
-  flutter_inappwebview: ^6.0.0
+  flutter_inappwebview: ^6.1.0+1
   syncfusion_flutter_datepicker: ^26.2.7
   flutter_svg: ^2.0.10+1
+  # 텍스트
+  auto_size_text: ^3.0.0
   
   # Link
   url_launcher: ^6.3.0
@@ -61,13 +63,12 @@ dependencies:
   flutter_secure_storage: ^9.2.2
 
   # Code Generation
-  build_runner: ^2.4.12
-  freezed: ^2.5.7
   freezed_annotation: ^2.4.4
   json_annotation: ^4.9.0
 
   # International
   intl: ^0.19.0
+  badges: ^3.1.2
 
 dev_dependencies:
   flutter_test:
@@ -80,9 +81,9 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
 
-  build_runner: ^2.4.9
+  build_runner: ^2.4.12
   json_serializable: ^6.8.0
-  freezed: ^2.5.2
+  freezed: ^2.5.7
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -114,6 +115,35 @@ flutter:
     - family: BottomBarIcons
       fonts:
         - asset: assets/fonts/support_app_icons.ttf
+    - family: AppBarIcons
+      fonts:
+        - asset: assets/fonts/support_app_appbar_icons.ttf
+    - family:  SignUpIcons
+      fonts:
+        - asset: assets/fonts/SignUpIcons.ttf
+    - family:  MenuIcons
+      fonts:
+        - asset: assets/fonts/MenuIcons.ttf
+    - family: SUIT
+      fonts:
+        - asset: assets/fonts/SUIT-Thin.ttf
+          weight: 100
+        - asset: assets/fonts/SUIT-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/SUIT-Light.ttf
+          weight: 300
+        - asset: assets/fonts/SUIT-Medium.ttf
+          weight: 400
+        - asset: assets/fonts/SUIT-Regular.ttf
+          weight: 500
+        - asset: assets/fonts/SUIT-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/SUIT-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/SUIT-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/SUIT-Heavy.ttf
+          weight: 900
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

@@ -4,9 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:support_flutter/models/user_model.dart';
+import 'package:support_flutter/utils/error_util.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
 import 'package:support_flutter/viewmodels/login_view_model.dart';
 import 'package:support_flutter/views/widgets/rounded_text_field.dart';
+import 'package:support_flutter/views/widgets/text_font_widget.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -26,6 +28,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final state = ref.watch(loginViewModelProvider);
     ref.listen(loginViewModelProvider, (previous, next) {
       logger.d(next);
+      next.when(
+        data: (data) {
+          context.go('/');
+        },
+        loading: () {},
+        error: (error, stackTrace) {
+          logger.e(error);
+        },
+      );
     });
     return ScreenUtilInit(
       designSize: const Size(375, 812),
@@ -88,7 +99,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     maxLines: 1,
                     textInputType: TextInputType.text,
                     textAlign: TextAlign.left,
-                    hintText: '포털 아이디',
+                    hintText: '학교 이메일',
                     isAnimatedHint: false,
                     prefixIcon: SvgPicture.asset(
                       'assets/images/ic_person.svg',
@@ -145,17 +156,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 SizedBox(
                   height: 8.h,
                 ),
-                Visibility(
-                  visible: false,
-                  child: Text(
-                    getErrorMessage(null),
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: const Color(0xFFFF3F3F),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+                state.hasError
+                    ? Text(
+                        '* ${ErrorUtil.instance.getErrorMessage((state.error as UserModelError).code) ?? ''}',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: const Color(0xFFFF3F3F),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : Container(),
                 SizedBox(
                   height: 62.h,
                 ),
@@ -163,7 +173,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   width: double.infinity,
                   height: 56.h,
                   child: OutlinedButton(
-                    onPressed: state is UserModelLoading
+                    onPressed: state.isLoading
                         ? null
                         : () async {
                             final id = portalIdController.text.trim(),
@@ -177,21 +187,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 );
                           },
                     style: OutlinedButton.styleFrom(
-                      backgroundColor: const Color(0xFF000000),
-                      side: const BorderSide(
-                        width: 0.0,
-                      ),
+                      foregroundColor: const Color(0xFFFFFFFF),
+                      backgroundColor: const Color(0xFFF49446),
+                      side: BorderSide.none,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.r),
                       ),
                     ),
-                    child: Text(
+                    child: TextFontWidget.fontRegular(
                       '로그인',
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        color: const Color(0xFFFFFFFF),
-                        fontWeight: FontWeight.bold,
-                      ),
+                      fontSize: 18.sp,
+                      color: const Color(0xFFFFFFFF),
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -205,13 +212,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       onPressed: () {
                         context.go('/login/find_pw');
                       },
-                      child: Text(
+                      child: TextFontWidget.fontRegular(
                         '비밀번호 찾기',
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: const Color(0xFF000000),
-                          fontWeight: FontWeight.w400,
-                        ),
+                        fontSize: 12.sp,
+                        color: const Color(0xFF646464),
+                        fontWeight: FontWeight.w300,
                       ),
                     ),
                     SizedBox(
@@ -219,7 +224,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       height: 12.h,
                       child: const DecoratedBox(
                         decoration: BoxDecoration(
-                          color: Color(0xFF000000),
+                          color: Color(0xFF646464),
                         ),
                       ),
                     ),
@@ -227,13 +232,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       onPressed: () {
                         context.go('/login/sign_up');
                       },
-                      child: Text(
+                      child: TextFontWidget.fontRegular(
                         '회원가입',
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: const Color(0xFF000000),
-                          fontWeight: FontWeight.w400,
-                        ),
+                        fontSize: 12.sp,
+                        color: const Color(0xFF646464),
+                        fontWeight: FontWeight.w300,
                       ),
                     ),
                   ],

@@ -8,7 +8,9 @@ import 'package:support_flutter/views/screens/find_pw_screen.dart';
 import 'package:support_flutter/views/screens/login_screen.dart';
 import 'package:support_flutter/views/screens/main_screen.dart';
 import 'package:support_flutter/views/screens/notice_detail_screen.dart';
+import 'package:support_flutter/views/screens/notice_screen.dart';
 import 'package:support_flutter/views/screens/profile_screen.dart';
+import 'package:support_flutter/views/screens/schedule_detail_screen.dart';
 import 'package:support_flutter/views/screens/sign_up_screen.dart';
 
 final routerProvider = Provider<GoRouter>(
@@ -71,11 +73,22 @@ final routerProvider = Provider<GoRouter>(
               path: 'policy',
               builder: (_, __) => FindPwScreen(),
             ),
-            // NoticeDetailScreen
             GoRoute(
-              path: 'notice_detail',
-              builder: (context, state) => NoticeDetailScreen(),
+              path: 'schedule_detail',
+              builder: (_, __) => ScheduleDetailScreen(),
             ),
+            GoRoute(
+              path: 'notice',
+              builder: (context, state) => NoticeScreen(),
+              routes: [
+                // NoticeDetailScreen
+                GoRoute(
+                  path: 'notice_detail',
+                  builder: (context, state) => NoticeDetailScreen(),
+                ),
+              ],
+            ),
+            // EditNoticeScreen
             GoRoute(
               path: 'edit_notice',
               builder: (context, state) => EditNoticeScreen(),

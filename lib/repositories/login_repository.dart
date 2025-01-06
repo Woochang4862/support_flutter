@@ -58,8 +58,8 @@ class LoginRepository {
   Future<void> logout({
     required String accessToken,
   }) async {
-    final response = await dio.post(
-      'http://$host:$port/integration/logout',
+    final response = await dio.get(
+      '$baseUrl/logout',
       options: Options(
         headers: {
           'Authorization': 'Bearer $accessToken',

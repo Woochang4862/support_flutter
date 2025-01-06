@@ -1,23 +1,21 @@
-import 'dart:convert';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/models/user_model.dart';
-import 'package:support_flutter/repositories/auth_service.dart';
+import 'package:support_flutter/repositories/login_repository.dart';
 import 'package:support_flutter/secure_storage/secure_storage.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
 
 final userViewModelProvider =
     StateNotifierProvider<UserViewModel, AsyncValue<UserModel?>>((ref) {
-  final authService = ref.read(authServiceProvider);
+  final loginRepository = ref.read(loginRepositoryProvider);
+  // final profileViewModel = ref.read(profileViewModelProvider.notifier);
   //final userMeRepository = ref.read(userMeRepositoryProvider);
-  //final profileViewModel = ref.read(profileViewModelProvider.notifier);
-  
+
   final storage = ref.read(secureStorageProvider);
 
   return UserViewModel(
-    authService: authService,
+    loginRepository: loginRepository,
     //userMeRepository: userMeRepository,
     // profileViewModel: profileViewModel,
     storage: storage,
@@ -25,13 +23,13 @@ final userViewModelProvider =
 });
 
 class UserViewModel extends StateNotifier<AsyncValue<UserModel?>> {
-  final AuthService authService;
+  final LoginRepository loginRepository;
   //final UserMeRepository userMeRepository;
   // final ProfileViewModel profileViewModel;
   final FlutterSecureStorage storage;
 
   UserViewModel({
-    required this.authService,
+    required this.loginRepository,
     //required this.userMeRepository,
     // required this.profileViewModel,
     required this.storage,
@@ -70,7 +68,7 @@ class UserViewModel extends StateNotifier<AsyncValue<UserModel?>> {
     required String password,
   }) async {
     try {
-      final response = await authService.login(
+      final response = await loginRepository.login(
         id: id,
         password: password,
       );
@@ -116,11 +114,11 @@ class UserViewModel extends StateNotifier<AsyncValue<UserModel?>> {
 
       final accessToken = await storage.read(key: accessTokenKey);
       final refreshToken = await storage.read(key: refreshTokenKey);
-      
+
       logger.d(
           'UserViewModel - AccessToken : $accessToken / RefreshToken : $refreshToken 삭제 성공!');
 
-      // await authService.logout(accessToken: _accessToken ?? "");
+      await loginRepository.logout(accessToken: _accessToken ?? "");
     } on UserModelError catch (e) {
       logger.d(e);
       rethrow;

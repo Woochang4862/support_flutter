@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:support_flutter/utils/logging/logger.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-class SupportAppDateRangePicker extends StatefulWidget {
-  const SupportAppDateRangePicker({
+class SupportAppSchedulesView extends StatefulWidget {
+  SupportAppSchedulesView({
     super.key,
-    required this.controller,
+    this.initialDate,
     required this.onSelectionChanged,
-  });
+  }) {
+    initialDate = initialDate ?? DateTime.now();
+  }
 
-  final DateRangePickerController controller;
+  // final DateRangePickerController controller;
+  DateTime? initialDate;
   final Function(DateRangePickerSelectionChangedArgs) onSelectionChanged;
 
   @override
@@ -19,7 +21,7 @@ class SupportAppDateRangePicker extends StatefulWidget {
       _SupportAppDateRangePickerState();
 }
 
-class _SupportAppDateRangePickerState extends State<SupportAppDateRangePicker> {
+class _SupportAppDateRangePickerState extends State<SupportAppSchedulesView> {
   final Map<String, Color> _days = <String, Color>{
     '일': Color(0xFFFF8888),
     '월': Color(0xFF7C7C7C),
@@ -31,11 +33,11 @@ class _SupportAppDateRangePickerState extends State<SupportAppDateRangePicker> {
   };
 
   final headerDateFormat = DateFormat("yyyy년 M월");
-  DateTime displayDate = DateTime.now();
+  late DateTime displayDate;
 
   @override
   void initState() {
-    widget.controller.displayDate = displayDate;
+    displayDate = widget.initialDate!;
     super.initState();
   }
 
@@ -61,9 +63,7 @@ class _SupportAppDateRangePickerState extends State<SupportAppDateRangePicker> {
                     padding: const EdgeInsets.all(0),
                     onPressed: () {
                       addMonth(-1);
-                      setState(() {
-                        displayDate = widget.controller.displayDate!;
-                      });
+                      setState(() {});
                     },
                     icon: Icon(
                       Icons.chevron_left,
@@ -92,9 +92,7 @@ class _SupportAppDateRangePickerState extends State<SupportAppDateRangePicker> {
                     padding: EdgeInsets.all(0),
                     onPressed: () {
                       addMonth(1);
-                      setState(() {
-                        displayDate = widget.controller.displayDate!;
-                      });
+                      setState(() {});
                     },
                     icon: Icon(
                       Icons.chevron_right,
@@ -131,28 +129,9 @@ class _SupportAppDateRangePickerState extends State<SupportAppDateRangePicker> {
             )),
         SizedBox(
           height: 200.h,
-          child: SfDateRangePicker(
-            controller: widget.controller,
-            headerHeight: 0.h,
-            // selectionShape: DateRangePickerSelectionShape.rectangle,
-            // cellBuilder: _cellBuilder,
-            monthViewSettings: const DateRangePickerMonthViewSettings(
-              viewHeaderHeight: 0,
-              showTrailingAndLeadingDates: true,
-            ),
-            backgroundColor: Color(0x00000000),
-            startRangeSelectionColor: Color(0xFF4F7BD0),
-            endRangeSelectionColor: Color(0xFF4F7BD0),
-            rangeSelectionColor: Color(0x774F7BD0),
-            onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
-              widget.onSelectionChanged(args);
-            },
-            selectionMode: DateRangePickerSelectionMode.multiRange,
-            monthCellStyle: const DateRangePickerMonthCellStyle(
-              todayCellDecoration: BoxDecoration(),
-              todayTextStyle: TextStyle(color: Color(0xFF4F7BD0)),
-            ),
-            // cellBuilder: _cellBuilder,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: _buildCalendar(displayDate),
           ),
         ),
         Divider(
@@ -163,8 +142,7 @@ class _SupportAppDateRangePickerState extends State<SupportAppDateRangePicker> {
   }
 
   void addMonth(int monthToAdd) {
-    final currentDate = widget.controller.displayDate!;
-    widget.controller.displayDate = currentDate._add(monthToAdd: monthToAdd);
+    displayDate = displayDate._add(monthToAdd: monthToAdd);
   }
 
   Widget _cellBuilder(
@@ -177,7 +155,6 @@ class _SupportAppDateRangePickerState extends State<SupportAppDateRangePicker> {
     return Container(
       width: 24.w,
       height: 24.h,
-      
       alignment: Alignment.center,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(3.r)),
@@ -185,11 +162,69 @@ class _SupportAppDateRangePickerState extends State<SupportAppDateRangePicker> {
       ),
       child: cellDetails.date.month != displayDate.month
           ? Text(
-            DateFormat('dd').format(cellDetails.date),
-            style: TextStyle(color: const Color(0xFF767676)),
-          )
+              DateFormat('dd').format(cellDetails.date),
+              style: TextStyle(color: const Color(0xFF767676)),
+            )
           : Text(DateFormat('dd').format(cellDetails.date)),
     );
+  }
+
+  List<Widget> _buildCalendar(DateTime date) {
+    List<Widget> rows = [];
+    DateTime firstDayOfMonth = DateTime(date.year, date.month, 1);
+    DateTime lastMonth = DateTime(date.year, date.month - 1, 1);
+
+    int lastDayOfMonth = DateTime(date.year, date.month + 1, 0).day;
+    int lastDayOfLastMonth =
+        DateTime(lastMonth.year, lastMonth.month + 1, 0).day;
+
+    int firstWeekday = firstDayOfMonth.weekday;
+    int lastMonthDay = lastDayOfLastMonth - firstWeekday + 2;
+    int currentDay = 1;
+
+    for (int i = 0; i < (lastDayOfMonth ~/ 7 + 1); i++) {
+      List<Widget> days = [];
+      for (int j = 0; j < 7; j++) {
+        String text;
+        Color color;
+        if (i == 0 && j < firstWeekday - 1) {
+          text = '$lastMonthDay';
+          color = Colors.grey;
+          lastMonthDay++;
+        } else if (currentDay > lastDayOfMonth) {
+          text = '${currentDay - lastDayOfMonth}';
+          color = Colors.grey;
+          currentDay++;
+        } else {
+          text = '$currentDay';
+          color = Colors.black;
+          currentDay++;
+        }
+        days.add(
+          Flexible(
+            child: Column(
+              children: [
+                Flexible(
+                  child: Center(
+                    child: Text(
+                      text,
+                      style: TextStyle(color: color),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+      rows.add(Flexible(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: days,
+        ),
+      ));
+    }
+    return rows;
   }
 }
 

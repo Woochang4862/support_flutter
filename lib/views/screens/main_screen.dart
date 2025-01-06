@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:support_flutter/routers/router.dart';
+import 'package:support_flutter/utils/dialog_manager.dart';
+import 'package:support_flutter/utils/icons/support_app_appbar_icons.dart';
 import 'package:support_flutter/utils/icons/support_app_icons.dart';
+import 'package:support_flutter/viewmodels/user_view_model.dart';
 import 'package:support_flutter/views/screens/community_screen.dart';
 import 'package:support_flutter/views/screens/delivery_screen.dart';
 import 'package:support_flutter/views/screens/laundary_screen.dart';
-import 'package:support_flutter/views/screens/notice_screen.dart';
+import 'package:support_flutter/views/screens/schedule_screen.dart';
+import 'package:badges/badges.dart' as badges;
 
 class MainScreen extends ConsumerStatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -19,35 +22,46 @@ class MainScreen extends ConsumerStatefulWidget {
 class _MainScreenState extends ConsumerState<MainScreen> {
   var _index = 0;
   static const List _pages = [
-    NoticeScreen(),
+    ScheduleScreen(),
     LaundaryScreen(),
     DeliveryScreen(),
     CommunityScreen(),
   ];
   static const List _titles = [
-    "공지사항",
+    "일정",
     "생활편의",
     "공동배달",
     "커뮤니티",
   ];
-  final Map<String, Function(BuildContext)> _logOutMenu = {
-    "로그인": (context) {
+  final Map<String, Function(BuildContext, WidgetRef)> _logOutMenu = {
+    "로그인": (context, _) {
       context.go('/login');
     },
   };
-  final Map<String, Function(BuildContext)> _logInMenu = {
-    "내 정보": (context) {
+  final Map<String, Function(BuildContext, WidgetRef)> _logInMenu = {
+    "내 정보": (context, _) {
       context.go('/profile');
     },
-    "문의하기": (context) {
+    "문의하기": (context, _) {
       context.go('/contact');
     },
-    "개인정보 동의": (context) {
+    "개인정보 동의": (context, _) {
       context.go('/policy');
     },
-    "로그아웃": (context) {},
+    "로그아웃": (context, ref) {
+      DialogManager.instance.showAlertDialog(
+        context: context,
+        content: 'Support 에서 로그아웃 하시겠습니까?',
+        leftButtonText: '취소',
+        rightButtonText: '로그아웃',
+        onRightButtonPressed: () {
+          ref.read(userViewModelProvider.notifier).logout();
+        },
+      );
+    },
   };
-  Map<String, Function(BuildContext)> _currentMenu = {};
+  Map<String, Function(BuildContext, WidgetRef)> _currentMenu = {};
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -57,9 +71,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userState = ref.watch(userViewModelProvider);
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       builder: (context, child) => Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           centerTitle: true,
           scrolledUnderElevation: 0,
@@ -67,6 +83,27 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             _titles[_index],
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
           ),
+          leading: IconButton(
+            icon: Icon(AppBarIcons.ic_menu),
+            onPressed: () => _scaffoldKey.currentState!.openDrawer(),
+          ),
+          actions: [
+            badges.Badge(
+              badgeStyle: badges.BadgeStyle(
+                padding: EdgeInsets.all(3.h),
+              ),
+              position: badges.BadgePosition.topStart(top: 12.h, start: 15.w),
+              child: IconButton(
+                icon: Icon(
+                  AppBarIcons.ic_notification,
+                  size: 22.w,
+                ),
+                onPressed: () {
+                  context.go('/notice');
+                },
+              ),
+            )
+          ],
         ),
         drawer: Drawer(
           width: 232.w,
@@ -75,39 +112,42 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             borderRadius: BorderRadius.only(
                 topRight: Radius.circular(0), bottomRight: Radius.circular(0)),
           ),
-          child: ListView.separated(
-            itemCount: _currentMenu.keys.length,
-            itemBuilder: (context, index) {
-              return Ink(
-                color: Colors.white,
-                child: InkWell(
-                  onTap: () {
-                    _currentMenu.entries.toList()[index].value(context);
-                  },
-                  child: Container(
-                    padding: EdgeInsets.only(left: 32.w),
-                    height: 40.h,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        _currentMenu.keys.toList()[index],
-                        style: TextStyle(
-                          fontSize: 14.sp,
+          child: Builder(builder: (context) {
+            _currentMenu = userState.value != null ? _logInMenu : _logOutMenu;
+            return ListView.separated(
+              itemCount: _currentMenu.keys.length,
+              itemBuilder: (context, index) {
+                return Ink(
+                  color: Colors.white,
+                  child: InkWell(
+                    onTap: () {
+                      _currentMenu.entries.toList()[index].value(context, ref);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.only(left: 32.w),
+                      height: 40.h,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          _currentMenu.keys.toList()[index],
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              return Divider(
-                thickness: 0.5.h,
-                height: 0.6.h,
-              );
-            },
-            padding: EdgeInsets.only(top: 98.h),
-          ),
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return Divider(
+                  thickness: 0.5.h,
+                  height: 0.6.h,
+                );
+              },
+              padding: EdgeInsets.only(top: 98.h),
+            );
+          }),
         ),
         body: _pages[_index],
         bottomNavigationBar: Container(
@@ -135,7 +175,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(BottomBarIcons.ic_baseline_home),
-                label: '공지사항',
+                label: '일정',
               ),
               BottomNavigationBarItem(
                 icon: Icon(BottomBarIcons.ic_baseline_search),

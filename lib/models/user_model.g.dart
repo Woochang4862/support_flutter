@@ -8,14 +8,20 @@ part of 'user_model.dart';
 
 _$UserModelImpl _$$UserModelImplFromJson(Map<String, dynamic> json) =>
     _$UserModelImpl(
-      message: json['message'] as String,
+      statusCode: (json['statusCode'] as num?)?.toInt(),
+      statusMessage: json['statusMessage'] as String,
+      responseTime: json['responseTime'] as String?,
       data: LoginData.fromJson(json['data'] as Map<String, dynamic>),
+      code: json['code'] as String?,
     );
 
 Map<String, dynamic> _$$UserModelImplToJson(_$UserModelImpl instance) =>
     <String, dynamic>{
-      'message': instance.message,
+      'statusCode': instance.statusCode,
+      'statusMessage': instance.statusMessage,
+      'responseTime': instance.responseTime,
       'data': instance.data.toJson(),
+      'code': instance.code,
     };
 
 _$LoginDataImpl _$$LoginDataImplFromJson(Map<String, dynamic> json) =>
@@ -32,19 +38,17 @@ Map<String, dynamic> _$$LoginDataImplToJson(_$LoginDataImpl instance) =>
 
 _$UserModelErrorImpl _$$UserModelErrorImplFromJson(Map<String, dynamic> json) =>
     _$UserModelErrorImpl(
-      message: json['message'] as String,
+      statusCode: (json['statusCode'] as num?)?.toInt(),
+      statusMessage: json['statusMessage'] as String,
       code: json['code'] as String?,
-      exception: json['exception'] as String?,
-      error: json['error'] as String?,
-      status: (json['status'] as num?)?.toInt(),
+      responseTime: json['responseTime'] as String?,
     );
 
 Map<String, dynamic> _$$UserModelErrorImplToJson(
         _$UserModelErrorImpl instance) =>
     <String, dynamic>{
-      'message': instance.message,
+      'statusCode': instance.statusCode,
+      'statusMessage': instance.statusMessage,
       'code': instance.code,
-      'exception': instance.exception,
-      'error': instance.error,
-      'status': instance.status,
+      'responseTime': instance.responseTime,
     };
