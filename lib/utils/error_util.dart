@@ -45,6 +45,8 @@ class ErrorUtil {
       case "ERR007": // 중복된 아이디
       case "ERR109": // 중복된 아이디
         return '중복된 아이디입니다.';
+      case "ERR113":
+        return '존재하지 않는 아이디입니다!';
       default:
         return null;
     }

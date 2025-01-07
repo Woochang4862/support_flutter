@@ -50,3 +50,6 @@ const colors = [
   Color(0xFF9C27B0),
   Color(0xFF3F51B5),
 ];
+
+const mainColor = Color(0xFFFFFFFF);
+const accentColor = Color(0xFFF49446);

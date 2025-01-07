@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/utils/dialog_manager.dart';
 import 'package:support_flutter/utils/icons/support_app_appbar_icons.dart';
 import 'package:support_flutter/utils/icons/support_app_icons.dart';
@@ -118,7 +119,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               itemCount: _currentMenu.keys.length,
               itemBuilder: (context, index) {
                 return Ink(
-                  color: Colors.white,
+                  color: mainColor,
                   child: InkWell(
                     onTap: () {
                       _currentMenu.entries.toList()[index].value(context, ref);

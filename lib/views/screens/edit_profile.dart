@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/views/widgets/rounded_text_field.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
@@ -64,10 +65,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                             style: OutlinedButton.styleFrom(
                               backgroundColor: const Color(0xFF4F7BD0),
                               surfaceTintColor: const Color(0xFF4F7BD0),
-                              foregroundColor: Colors.white,
+                              foregroundColor: mainColor,
                               side: BorderSide(
-                                  width: 0,
-                                ),
+                                width: 0,
+                              ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(4.r),
                               ),

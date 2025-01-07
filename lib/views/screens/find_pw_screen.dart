@@ -3,7 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:support_flutter/const/data.dart';
+import 'package:support_flutter/models/find_pw_model.dart';
+import 'package:support_flutter/utils/dialog_manager.dart';
+import 'package:support_flutter/utils/error_util.dart';
+import 'package:support_flutter/utils/logging/logger.dart';
+import 'package:support_flutter/viewmodels/find_pw_view_model.dart';
 import 'package:support_flutter/views/widgets/rounded_text_field.dart';
+import 'package:support_flutter/views/widgets/text_font_widget.dart';
 
 class FindPwScreen extends ConsumerStatefulWidget {
   const FindPwScreen({Key? key}) : super(key: key);
@@ -13,11 +20,33 @@ class FindPwScreen extends ConsumerStatefulWidget {
 }
 
 class _FindPwScreenState extends ConsumerState<FindPwScreen> {
-  final TextEditingController portalIdController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    portalIdController.addListener(
+    final state = ref.watch(findPWViewModelProvider);
+    ref.listen(findPWViewModelProvider, (prev, next) {
+      logger.d(next);
+      next.when(
+          data: (data) {
+            switch (data!.type) {
+              case FindPWModelType.findPW:
+                DialogManager.instance.showAlertDialog(
+                    context: context,
+                    content: '비밀번호가 초기화되었습니다.\n학교 이메일로 초기화된 비밀번호가 전송되었습니다!');
+                break;
+              default:
+            }
+          },
+          error: (error, stackTrace) {
+            error = error as FindPWModelError;
+            DialogManager.instance.showAlertDialog(
+                context: context,
+                content: ErrorUtil.instance.getErrorMessage(error.code));
+          },
+          loading: () {});
+    });
+    emailController.addListener(
       () {},
     );
     return ScreenUtilInit(
@@ -56,6 +85,35 @@ class _FindPwScreenState extends ConsumerState<FindPwScreen> {
                   ),
                 ),
               ),
+              bottomNavigationBar: SafeArea(
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 22.w,
+                    vertical: 10.h,
+                  ),
+                  width: double.infinity,
+                  height: 76.h,
+                  child: OutlinedButton(
+                    onPressed: () => context.go('/login'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: mainColor,
+                      backgroundColor: accentColor,
+                      side: BorderSide.none,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                    ),
+                    child: Text(
+                      '로그인하러 가기',
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        color: const Color(0xFFFFFFFF),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               body: SingleChildScrollView(
                 child: Container(
                   margin: EdgeInsets.only(top: 60.h),
@@ -67,7 +125,7 @@ class _FindPwScreenState extends ConsumerState<FindPwScreen> {
                         height: 50.h,
                         child: RoundedTextField(
                           textInputAction: TextInputAction.done,
-                          textEditController: portalIdController,
+                          textEditController: emailController,
                           leftBottomCornerRadius: 8.r,
                           rightBottomCornerRadius: 8.r,
                           leftTopCornerRadius: 8.r,
@@ -76,7 +134,7 @@ class _FindPwScreenState extends ConsumerState<FindPwScreen> {
                           maxLines: 1,
                           textInputType: TextInputType.text,
                           textAlign: TextAlign.left,
-                          hintText: '포털 아이디',
+                          hintText: '학교 이메일 @suwon.ac.kr',
                           isAnimatedHint: false,
                           prefixIcon: SvgPicture.asset(
                             'assets/images/ic_person.svg',
@@ -91,18 +149,33 @@ class _FindPwScreenState extends ConsumerState<FindPwScreen> {
                         ),
                       ),
                       SizedBox(
-                        height: 116.h,
+                        height: 10.h,
+                      ),
+                      TextFontWidget.fontRegular(
+                        '보안을 위해 메일로 초기화된 비밀번호를 발송해 드립니다.\n로그인 후 변경해 주세요.',
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w300,
+                        color: Color(0xFF989898),
+                      ),
+                      SizedBox(
+                        height: 30.h,
                       ),
                       SizedBox(
                         width: double.infinity,
                         height: 56.h,
                         child: OutlinedButton(
-                          onPressed: null != null ? null : () async {},
+                          onPressed: state.isLoading
+                              ? null
+                              : () async {
+                                  final id = emailController.text.trim();
+                                  await ref
+                                      .read(findPWViewModelProvider.notifier)
+                                      .findPW(id: id);
+                                },
                           style: OutlinedButton.styleFrom(
+                            foregroundColor: mainColor,
                             backgroundColor: const Color(0xFF4F4F4F),
-                            side: const BorderSide(
-                              width: 0.0,
-                            ),
+                            side: BorderSide.none,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.r),
                             ),
@@ -119,63 +192,6 @@ class _FindPwScreenState extends ConsumerState<FindPwScreen> {
                       ),
                       SizedBox(
                         height: 12.h,
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 56.h,
-                        child: OutlinedButton(
-                          onPressed: () {
-                            final encodedUrl = Uri.encodeComponent(
-                                'https://mail.suwon.ac.kr:10443/m/index.jsp');
-
-                            context
-                                .push('/login/find_pw/webview/${encodedUrl}');
-                          },
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4F4F4F),
-                            side: const BorderSide(
-                              width: 0.0,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.r),
-                            ),
-                          ),
-                          child: Text(
-                            '포털로 이동하기',
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              color: const Color(0xFFFFFFFF),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 26.h,
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 56.h,
-                        child: OutlinedButton(
-                          onPressed: () => context.go('/login'),
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4F7BD0),
-                            side: const BorderSide(
-                              width: 0.0,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.r),
-                            ),
-                          ),
-                          child: Text(
-                            '로그인하러 가기',
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              color: const Color(0xFFFFFFFF),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
                       ),
                     ],
                   ),
@@ -197,7 +213,7 @@ class _FindPwScreenState extends ConsumerState<FindPwScreen> {
 
   @override
   void dispose() {
-    portalIdController.dispose();
+    emailController.dispose();
     super.dispose();
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:support_flutter/const/data.dart';
 
 class EditNoticeScreen extends ConsumerStatefulWidget {
   const EditNoticeScreen({super.key});
@@ -65,7 +66,7 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                             style: OutlinedButton.styleFrom(
                               backgroundColor: const Color(0xFF4F7BD0),
                               surfaceTintColor: const Color(0xFF4F7BD0),
-                              foregroundColor: Colors.white,
+                              foregroundColor: mainColor,
                               side: BorderSide(
                                 width: 0,
                               ),
@@ -114,7 +115,6 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                               border: const UnderlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color(0xFF9F9F9F),
-                                  
                                 ),
                               ),
                               focusedBorder: const UnderlineInputBorder(

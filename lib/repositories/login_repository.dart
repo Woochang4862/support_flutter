@@ -9,7 +9,7 @@ final loginRepositoryProvider = Provider<LoginRepository>((ref) {
   final dio = ref.watch(dioProvider);
 
   return LoginRepository(
-    baseUrl: 'http://$host:$port/member',
+    baseUrl: '$protocol://$host:$port/member',
     dio: dio,
   );
 });

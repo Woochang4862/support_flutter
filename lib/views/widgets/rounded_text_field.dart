@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:support_flutter/const/data.dart';
 
 class RoundedTextField extends StatelessWidget {
   final TextEditingController? textEditController;
@@ -103,7 +104,7 @@ class RoundedTextField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
-            color: borderColor ?? const Color(0xFF6E78D8),
+            color: borderColor ?? accentColor,
             width: borderWidth ?? 0,
           ),
           borderRadius: BorderRadius.only(

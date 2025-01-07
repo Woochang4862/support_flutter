@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/routers/router.dart';
 
 void main() async {
@@ -18,13 +19,13 @@ class SupportApp extends ConsumerWidget {
     final ThemeData theme = ThemeData();
     return MaterialApp.router(
       theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: mainColor,
         colorScheme: theme.colorScheme.copyWith(secondary: Color(0xFF4F7BD0)),
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.white,
+          backgroundColor: mainColor,
         ),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
-          backgroundColor: Colors.white,
+          backgroundColor: mainColor,
         ),
       ),
       debugShowCheckedModeBanner: false,

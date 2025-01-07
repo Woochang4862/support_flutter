@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/utils/icons/sign_up_icons_icons.dart';
 import 'package:support_flutter/views/widgets/rounded_text_field.dart';
 import 'package:support_flutter/views/widgets/text_font_widget.dart';
@@ -133,7 +134,7 @@ class _RoundedDropdownState extends State<RoundedDropdown> {
                   )
                 : null,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: mainColor,
               borderRadius: BorderRadius.circular(5.r),
               border: Border.all(
                 color: Colors.grey,

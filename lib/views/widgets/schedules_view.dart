@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/models/schedules_model.dart';
 import 'package:support_flutter/utils/extensions.dart';
 import 'package:support_flutter/views/widgets/schedules_simple_view.dart';
@@ -61,7 +62,7 @@ class _SchedulesViewState extends ConsumerState<SchedulesView> {
               height: 30.h,
               width: 30.w,
               child: Card(
-                color: Colors.white,
+                color: mainColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.r),
                 ),
@@ -90,7 +91,7 @@ class _SchedulesViewState extends ConsumerState<SchedulesView> {
               height: 30.h,
               width: 30.w,
               child: Card(
-                color: Colors.white,
+                color: mainColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.r),
                 ),
@@ -215,7 +216,7 @@ class _SchedulesViewState extends ConsumerState<SchedulesView> {
         }
 
         if (_selectedDate.equal(selectedDate)) {
-          color = Colors.white;
+          color = mainColor;
         }
 
         days.add(

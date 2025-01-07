@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/views/widgets/text_font_widget.dart';
 
 class AlertTextDialog extends StatefulWidget {
@@ -32,7 +33,7 @@ class _AlertTextDialogState extends State<AlertTextDialog> {
               return Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.r),
-                  color: Colors.white,
+                  color: mainColor,
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -90,7 +91,7 @@ class _AlertTextDialogState extends State<AlertTextDialog> {
                                 },
                                 style: TextButton.styleFrom(
                                   minimumSize: Size.fromHeight(56.h),
-                                  //primary: Colors.white,
+                                  //primary: mainColor,
                                   //onPrimary: Colors.blue,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.only(
@@ -121,7 +122,7 @@ class _AlertTextDialogState extends State<AlertTextDialog> {
                                 },
                                 style: TextButton.styleFrom(
                                   minimumSize: Size.fromHeight(56.h),
-                                  //primary: Colors.white,
+                                  //primary: mainColor,
                                   //onPrimary: Colors.blue,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.only(
@@ -147,7 +148,7 @@ class _AlertTextDialogState extends State<AlertTextDialog> {
                         },
                         style: TextButton.styleFrom(
                           minimumSize: Size.fromHeight(50.h),
-                          //primary: Colors.white,
+                          //primary: mainColor,
                           //onPrimary: Colors.blue,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.vertical(
