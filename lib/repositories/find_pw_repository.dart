@@ -35,7 +35,7 @@ class FindPWRepository {
 
     logger.d(response.data);
 
-    logger.d('login - ${response.realUri} 로 요청 성공! (${response.statusCode})');
+    logger.d('findPW - ${response.realUri} 로 요청 성공! (${response.statusCode})');
 
     if (response.statusCode == 200) {
       return FindPWModel.fromJson(response.data)

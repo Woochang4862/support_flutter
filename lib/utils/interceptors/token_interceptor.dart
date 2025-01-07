@@ -18,7 +18,7 @@ class TokenInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    if (options.headers['accessToken'] == 'true') {
+    if (options.headers['accessToken'] == true) {
       // 헤더 삭제
       options.headers.remove('accessToken');
 
@@ -39,7 +39,7 @@ class TokenInterceptor extends Interceptor {
       options.headers.addAll({
         'Authorization': 'Bearer $accessToken',
       });
-    } else if (options.headers['refreshToken'] == 'true') {
+    } else if (options.headers['refreshToken'] == true) {
       // 헤더 삭제
       options.headers.remove('refreshToken');
 
