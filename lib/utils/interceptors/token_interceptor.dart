@@ -5,6 +5,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/models/user_model.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
+import 'package:support_flutter/viewmodels/user_view_model.dart';
 
 class TokenInterceptor extends Interceptor {
   final Ref ref;
@@ -113,7 +114,7 @@ class TokenInterceptor extends Interceptor {
         // secure storage도 update
         await storage.write(key: accessTokenKey, value: accessToken);
         await storage.write(key: refreshTokenKey, value: newRefreshToken);
-        await storage.write(key: roleKey, value: payload['role']);
+        await storage.write(key: roleKey, value: payload['auth']);
 
         // 디버깅용 확인 코드
         final _accessToken = await storage.read(key: accessTokenKey);
@@ -129,7 +130,7 @@ class TokenInterceptor extends Interceptor {
 
         // 요청의 헤더에 새로 발급받은 accessToken으로 변경하기
         options.headers.addAll({
-          // 'Authorization': 'Bearer $accessToken',
+          'Authorization': 'Bearer $accessToken',
         });
 
         final newResponse = await dio.fetch(options);
@@ -138,7 +139,7 @@ class TokenInterceptor extends Interceptor {
       } on DioException catch (e) {
         logger.e(e);
         // 새로운 Access Token임에도 에러가 발생한다면, Refresh Token마저도 만료된 것임
-        // await ref.read(userViewModelProvider.notifier).logout();
+        await ref.read(userViewModelProvider.notifier).logout();
 
         return handler.reject(e);
       } catch (e) {
