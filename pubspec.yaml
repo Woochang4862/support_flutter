@@ -45,7 +45,7 @@ dependencies:
   auto_size_text: ^3.0.0
   
   # Link
-  url_launcher: ^6.3.0
+  url_launcher: ^6.3.1
 
   # State Management
   flutter_riverpod: ^2.5.1

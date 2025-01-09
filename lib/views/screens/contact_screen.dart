@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class ContactScreen extends StatelessWidget {
@@ -78,9 +79,10 @@ class ContactScreen extends StatelessWidget {
                           ),
                           OutlinedButton(
                             onPressed: () async {
-                              final result = await launchUrlString('tel://031-229-8202', mode: LaunchMode.platformDefault);
+                              final result = await launchUrl(
+                                  Uri.parse('tel://031-229-8202'),
+                                  mode: LaunchMode.platformDefault);
                               if (result) {
-
                               } else {
                                 logger.d('Failed to make a call!');
                               }
@@ -90,16 +92,17 @@ class ContactScreen extends StatelessWidget {
                               foregroundColor: const Color(0xFFFFFFFF),
                               padding: EdgeInsets.zero,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(8.r)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8.r)),
                               ),
                             ),
                             child: Text(
                               '통화 연결',
                               style: TextStyle(
-                              fontSize: 10.sp,
-                              color: const Color(0xFFFFFFFF),
-                              fontWeight: FontWeight.w600,
-                            ),
+                                fontSize: 10.sp,
+                                color: const Color(0xFFFFFFFF),
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ],

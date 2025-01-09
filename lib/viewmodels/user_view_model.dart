@@ -2,7 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:support_flutter/const/data.dart';
+import 'package:support_flutter/models/delete_user_model.dart';
 import 'package:support_flutter/models/user_model.dart';
+import 'package:support_flutter/repositories/delete_user_repository.dart';
 import 'package:support_flutter/repositories/login_repository.dart';
 import 'package:support_flutter/repositories/profile_repository.dart';
 import 'package:support_flutter/secure_storage/secure_storage.dart';
@@ -12,12 +14,14 @@ final userViewModelProvider =
     StateNotifierProvider<UserViewModel, AsyncValue<UserModel?>>((ref) {
   final loginRepository = ref.read(loginRepositoryProvider);
   final profileRepository = ref.read(profileRepositoryProvider);
+  final deleteUserRepository = ref.read(deleteUserRepositoryProvider);
 
   final storage = ref.read(secureStorageProvider);
 
   return UserViewModel(
     loginRepository: loginRepository,
     profileRepository: profileRepository,
+    deleteUserRepository: deleteUserRepository,
     storage: storage,
   );
 });
@@ -25,11 +29,13 @@ final userViewModelProvider =
 class UserViewModel extends StateNotifier<AsyncValue<UserModel?>> {
   final LoginRepository loginRepository;
   final ProfileRepository profileRepository;
+  final DeleteUserRepository deleteUserRepository;
   final FlutterSecureStorage storage;
 
   UserViewModel({
     required this.loginRepository,
     required this.profileRepository,
+    required this.deleteUserRepository,
     required this.storage,
   }) : super(AsyncData(null)) {
     getMe();
@@ -131,55 +137,21 @@ class UserViewModel extends StateNotifier<AsyncValue<UserModel?>> {
     }
   }
 
-  // Future<ChangePwModel> changePW({
-  //   required String userPw,
-  //   required String newPw,
-  //   required String confirmNewPw,
-  // }) async {
-  //   try {
-  //     final response = await authRepository.changePW(
-  //       userPw: userPw,
-  //       newPw: newPw,
-  //       confirmNewPw: confirmNewPw,
-  //     );
-  //     // 비밀번호 변경되는 경우
-  //     // 1. 사용자가 직접 비밀번호 변경
-  //     // 2. 비밀번호 찾기를 통한 비밀번호 변경
-  //     // -->> 두 경우 모두 다시 로그인하는 과정 필요!
-  //     await logout();
-  //     return response;
-  //   } on ChangePwModelError catch (e) {
-  //     // 단순로그인 실패 및 예상 범위 밖 에러(네트워크 에러 ...)
-  //     logger.d(e);
-  //     rethrow;
-  //   } catch (e) {
-  //     logger.e('예외발생 - $e');
-  //     rethrow;
-  //   }
-  // }
+  Future<DeleteUserModel> delete() async {
+    try {
+      final response = await deleteUserRepository.deleteUser();
 
-  // Future<ChangePwModel> resetPW({
-  //   required String newPw,
-  //   required String confirmNewPw,
-  //   required String uuid,
-  // }) async {
-  //   try {
-  //     final response = await authRepository.resetPW(
-  //       password: newPw,
-  //       confirmPassword: confirmNewPw,
-  //       uuid: uuid,
-  //     );
-  //     return response;
-  //   } on ChangePwModelError catch (e) {
-  //     // 예외처리 안 실패
-  //     logger.d(e);
-  //     rethrow;
-  //   } catch (e) {
-  //     // 예외처리 밖 에러(네트워크 에러 ...)
-  //     logger.e('예외발생 - $e');
-  //     rethrow;
-  //   }
-  // }
+      await logout();
+      return response;
+    } on DeleteUserModelError catch (_) {
+      rethrow;
+    } catch (e) {
+      throw DeleteUserModelError(
+        statusMessage: '예외발생 - $e',
+        type: DeleteUserModelType.delete,
+      );
+    }
+  }
 }
 
 class AutoLoginException implements Exception {
