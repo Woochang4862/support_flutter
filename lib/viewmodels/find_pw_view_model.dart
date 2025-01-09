@@ -19,6 +19,7 @@ class FindPwViewModel extends StateNotifier<AsyncValue<FindPWModel?>> {
     required String id,
   }) async {
     try {
+      state = AsyncLoading();
       if (id.isEmpty) {
         throw FindPWModelError(
           statusMessage: '학교 이메일이 비었습니다!',
@@ -26,7 +27,6 @@ class FindPwViewModel extends StateNotifier<AsyncValue<FindPWModel?>> {
           type: FindPWModelType.findPW,
         );
       }
-      state = AsyncLoading();
       final response = await findPWRepository.findPW(id: id);
       state = AsyncData(response);
     } on FindPWModelError catch (e) {

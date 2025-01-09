@@ -1,5 +1,3 @@
-import 'package:support_flutter/utils/logging/logger.dart';
-
 enum FieldType { id, password, passwordConfirm, nickname, gender, dormType }
 
 class ErrorUtil {
@@ -8,16 +6,19 @@ class ErrorUtil {
   static final ErrorUtil instance = ErrorUtil._();
 
   String? getErrorMessage(String? code) {
-    logger.d(code);
     switch (code) {
       case "USR-F100": // 학교 이메일 공백
         return '학교 이메일을 입력해주세요!';
       case "USR-F200": // 인증번호 공백
         return '인증번호를 입력해주세요!';
       case "USR-F300": // 비밀번호 공백
+      case "ERR108": // 비밀번호 공백
         return '비밀번호는 영어, 숫자, 특수문자 모두 포함하여 5~20자 이내로 작성해주세요!';
-      case "USR-F301": // 비밀번호 형식에 맞지 않음
+      case "USR-F301": // 비밀번호 확인 일치하지 않음
         return '비밀번호가 일치하지 않습니다!';
+      case "ERR112": // 현재 비밀번호 일치하지 않음
+      case "USR-F302": // 현재 비밀번호 일치하지 않음
+        return '현재 비밀번호가 일치하지 않습니다!';
       case "ERR001": // 서버 에러
       case "ERR002": // 미구현 api
         return '서버 에러가 발생했습니다.';

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:support_flutter/const/data.dart';
-import 'package:support_flutter/secure_storage/secure_storage.dart';
 import 'package:support_flutter/utils/extensions.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
 import 'package:support_flutter/viewmodels/schedules_view_model.dart';

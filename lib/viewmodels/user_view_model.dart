@@ -2,25 +2,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:support_flutter/const/data.dart';
-import 'package:support_flutter/models/profile_model.dart';
 import 'package:support_flutter/models/user_model.dart';
 import 'package:support_flutter/repositories/login_repository.dart';
 import 'package:support_flutter/repositories/profile_repository.dart';
 import 'package:support_flutter/secure_storage/secure_storage.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
-import 'package:support_flutter/viewmodels/profile_view_model.dart';
 
 final userViewModelProvider =
     StateNotifierProvider<UserViewModel, AsyncValue<UserModel?>>((ref) {
   final loginRepository = ref.read(loginRepositoryProvider);
   final profileRepository = ref.read(profileRepositoryProvider);
-  //final userMeRepository = ref.read(userMeRepositoryProvider);
 
   final storage = ref.read(secureStorageProvider);
 
   return UserViewModel(
     loginRepository: loginRepository,
-    //userMeRepository: userMeRepository,
     profileRepository: profileRepository,
     storage: storage,
   );
@@ -28,13 +24,11 @@ final userViewModelProvider =
 
 class UserViewModel extends StateNotifier<AsyncValue<UserModel?>> {
   final LoginRepository loginRepository;
-  //final UserMeRepository userMeRepository;
   final ProfileRepository profileRepository;
   final FlutterSecureStorage storage;
 
   UserViewModel({
     required this.loginRepository,
-    //required this.userMeRepository,
     required this.profileRepository,
     required this.storage,
   }) : super(AsyncData(null)) {

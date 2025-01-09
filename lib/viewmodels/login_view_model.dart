@@ -24,12 +24,12 @@ class LoginViewModel extends StateNotifier<AsyncValue<UserModel?>> {
     required String password,
   }) async {
     try {
+      // 첫 state는 Loading 상태
+      state = AsyncLoading();
       if (id.isEmpty || password.isEmpty) {
         throw UserModelError(
             statusMessage: '아이디 비밀번호가 입력되지 않았습니다.', code: "USR-F800");
       }
-      // 첫 state는 Loading 상태
-      state = AsyncLoading();
 
       final userResponse =
           await userViewModel.login(id: id, password: password);

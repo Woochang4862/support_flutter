@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:support_flutter/const/data.dart';
+import 'package:support_flutter/models/change_pw_model.dart';
+import 'package:support_flutter/utils/error_util.dart';
+import 'package:support_flutter/utils/logging/logger.dart';
+import 'package:support_flutter/viewmodels/change_pw_view_model.dart';
 import 'package:support_flutter/views/widgets/rounded_text_field.dart';
 
 class ChangePwScreen extends ConsumerStatefulWidget {
@@ -21,14 +27,22 @@ class _ChangePwScreenState extends ConsumerState<ChangePwScreen> {
   bool newPWConfirmVisible = false;
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final state = null;
-
+    final state = ref.watch(changePWViewModelProvider);
+    ref.listen(changePWViewModelProvider, (prev, next) {
+      logger.d(next);
+      next.when(
+          data: (data) {
+            switch (data?.type) {
+              case ChangePWModelType.changePW:
+                context.go('/');
+                break;
+              default:
+            }
+          },
+          error: (error, stackTrace) {},
+          loading: () {});
+    });
     return ScreenUtilInit(
         designSize: const Size(375, 812),
         builder: (context, child) => Scaffold(
@@ -87,7 +101,7 @@ class _ChangePwScreenState extends ConsumerState<ChangePwScreen> {
                         rightBottomCornerRadius: 8.r,
                         leftTopCornerRadius: 8.r,
                         rightTopCornerRadius: 8.r,
-                        borderColor: currentPWIsInvalid(state)
+                        borderColor: currentPWIsInvalid(state.error)
                             ? const Color(0xFFFF3F3F)
                             : null,
                         borderWidth: 1.w,
@@ -143,7 +157,7 @@ class _ChangePwScreenState extends ConsumerState<ChangePwScreen> {
                         rightBottomCornerRadius: 8.r,
                         leftTopCornerRadius: 8.r,
                         rightTopCornerRadius: 8.r,
-                        borderColor: newPWIsInvalid(state)
+                        borderColor: newPWIsInvalid(state.error)
                             ? const Color(0xFFFF3F3F)
                             : null,
                         borderWidth: 1.w,
@@ -181,9 +195,12 @@ class _ChangePwScreenState extends ConsumerState<ChangePwScreen> {
                           color: const Color(0xFF989898),
                         ),
                       ),
+                      SizedBox(
+                        height: 5.h,
+                      ),
                       RichText(
                         text: TextSpan(
-                          text: '* 비밀번호는 ',
+                          text: '* 영문, 숫자, 특수 문자를 포함한 ',
                           style: TextStyle(
                             fontSize: 10.sp,
                             fontWeight: FontWeight.w300,
@@ -191,9 +208,9 @@ class _ChangePwScreenState extends ConsumerState<ChangePwScreen> {
                           ),
                           children: const [
                             TextSpan(
-                              text: '6~20자',
+                              text: '5~20자',
                               style: TextStyle(
-                                color: Color(0xFF4F7BD0),
+                                color: accentColor,
                               ),
                             ),
                             TextSpan(text: ' 내로 입력해 주세요.'),
@@ -218,7 +235,7 @@ class _ChangePwScreenState extends ConsumerState<ChangePwScreen> {
                         rightBottomCornerRadius: 8.r,
                         leftTopCornerRadius: 8.r,
                         rightTopCornerRadius: 8.r,
-                        borderColor: newPWConfirmIsInvalid(state)
+                        borderColor: newPWConfirmIsInvalid(state.error)
                             ? const Color(0xFFFF3F3F)
                             : null,
                         borderWidth: 1.w,
@@ -259,17 +276,16 @@ class _ChangePwScreenState extends ConsumerState<ChangePwScreen> {
                       SizedBox(
                         height: 8.h,
                       ),
-                      Visibility(
-                        visible: state != null,
-                        child: Text(
-                          getErrorMessage(state),
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            color: const Color(0xFFFF3F3F),
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
+                      state.hasError
+                          ? Text(
+                              "* ${ErrorUtil.instance.getErrorMessage((state.error as ChangePWModelError).code) ?? ""}",
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: const Color(0xFFFF3F3F),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            )
+                          : Container(),
                       SizedBox(
                         height: 230.h,
                       ),
@@ -277,16 +293,22 @@ class _ChangePwScreenState extends ConsumerState<ChangePwScreen> {
                         width: double.infinity,
                         height: 56.h,
                         child: OutlinedButton(
-                          onPressed: state != null
+                          onPressed: state.isLoading
                               ? null
                               : () async {
-                                  // 공백이 아닌지 확인
-                                  // 비밀번호 규칙 체크
                                   final currentPW =
                                       currentPWController.text.trim();
                                   final newPW = newPWController.text.trim();
                                   final newPWConfirm =
                                       newPWConfirmController.text.trim();
+
+                                  ref
+                                      .read(changePWViewModelProvider.notifier)
+                                      .changePW(
+                                        currentPassword: currentPW,
+                                        newPassword: newPW,
+                                        newPasswordConfirm: newPWConfirm,
+                                      );
                                 },
                           style: OutlinedButton.styleFrom(
                             backgroundColor: const Color(0xFF000000),
@@ -315,59 +337,35 @@ class _ChangePwScreenState extends ConsumerState<ChangePwScreen> {
             ));
   }
 
-  String getErrorMessage(String? state) {
-    // if (state is ChangePWModelError) {
-    //   switch (state.code) {
-    //     // 모바일 에러코드
-    //     case "USR-F900": // 현재 비밀번호 공백
-    //       return "* 현재 비밀번호를 입력해주세요!";
-    //     case "USR-F200":
-    //       return "* 비밀번호는 문자, 숫자를 포함한 6~20 이내로 작성해주세요!";
-    //     case "USR-F300":
-    //       return "* 비밀번호가 일치하지 않습니다!";
-    //     // 서버 에러코드
-    //     case "USR-204": // 현재 비밀번호 불일치
-    //       return "현재 비밀번호가 일치하지 않습니다";
-    //     case "USR-202": // 새 비밀번호 확인 불일치
-    //     case "USR-212": // 새 비밀번호 확인 불일치
-    //       return "* 비밀번호가 일치하지 않습니다!";
-    //     case "USR-203": // 새 비밀번호 빈칸
-    //       return "* 비밀번호는 문자, 숫자를 포함한 6~20 이내로 작성해주세요!";
-    //     case "USR-210": // 해당 정보로 인증 중인 회원존재 X
-    //     default:
-    //       return "* 비밀번호를 변경하는 데 잠시 문제가 생겼습니다. 잠시후에 다시 시도해주세요!";
-    //   }
-    // }
-    return "";
-  }
-
-  bool currentPWIsInvalid(String? state) {
-    // if (state is ChangePWModelError) {
-    //   switch (state.code) {
-    //     case "USR-F900":
-    //       return true;
-    //   }
-    // }
+  bool currentPWIsInvalid(Object? error) {
+    if (error is ChangePWModelError) {
+      switch (error.code) {
+        case "ERR112":
+        case "USR-F302":
+          return true;
+      }
+    }
     return false;
   }
 
-  bool newPWIsInvalid(String? state) {
-    // if (state is ChangePWModelError) {
-    //   switch (state.code) {
-    //     case "USR-F200":
-    //       return true;
-    //   }
-    // }
+  bool newPWIsInvalid(Object? error) {
+    if (error is ChangePWModelError) {
+      switch (error.code) {
+        case "ERR108":
+        case "USR-F300":
+          return true;
+      }
+    }
     return false;
   }
 
-  bool newPWConfirmIsInvalid(String? state) {
-    // if (state is ChangePWModelError) {
-    //   switch (state.code) {
-    //     case "USR-F300":
-    //       return true;
-    //   }
-    // }
+  bool newPWConfirmIsInvalid(Object? error) {
+    if (error is ChangePWModelError) {
+      switch (error.code) {
+        case "USR-F301":
+          return true;
+      }
+    }
     return false;
   }
 
