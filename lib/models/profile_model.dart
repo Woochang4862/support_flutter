@@ -5,10 +5,12 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'profile_model.freezed.dart';
 part 'profile_model.g.dart';
 
-enum ProfileModelType { fetch }
+abstract class ProfileModelBase {}
+
+enum ProfileModelType { fetch, update }
 
 @freezed
-class ProfileModel with _$ProfileModel {
+class ProfileModel extends ProfileModelBase with _$ProfileModel {
   ProfileModel._();
   @JsonSerializable(explicitToJson: true)
   factory ProfileModel({
@@ -17,7 +19,7 @@ class ProfileModel with _$ProfileModel {
     required String statusMessage,
     String? code,
     String? responseTime,
-    required Profile data,
+    Profile? data,
   }) = _ProfileModel;
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) =>
@@ -50,7 +52,9 @@ class Profile with _$Profile {
 }
 
 @freezed
-class ProfileModelError with _$ProfileModelError implements Error {
+class ProfileModelError extends ProfileModelBase
+    with _$ProfileModelError
+    implements Error {
   ProfileModelError._();
   factory ProfileModelError({
     ProfileModelType? type,

@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:support_flutter/const/data.dart';
+import 'package:support_flutter/secure_storage/secure_storage.dart';
 import 'package:support_flutter/utils/extensions.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
 import 'package:support_flutter/viewmodels/schedules_view_model.dart';
+import 'package:support_flutter/viewmodels/user_view_model.dart';
 import 'package:support_flutter/views/widgets/notice_item.dart';
 import 'package:support_flutter/views/widgets/schedules_view.dart';
 import 'package:support_flutter/views/widgets/text_font_widget.dart';
@@ -20,24 +22,31 @@ class ScheduleScreen extends ConsumerStatefulWidget {
 class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   var displayDate = DateTime.now();
   DateTime selectedDate = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
+    final userState = ref.watch(userViewModelProvider);
     final schedulesState =
         ref.watch(schedulesViewModelProvider(displayDate.format('yyyy-MM')));
+    logger.d(userState);
     return Builder(builder: (context) {
       return ScreenUtilInit(
           designSize: const Size(375, 812),
           builder: (context, child) {
             return Scaffold(
-              floatingActionButton: FloatingActionButton(
-                onPressed: () => context.go('/edit_notice'),
-                backgroundColor: mainColor,
-                shape: const CircleBorder(),
-                child: const Icon(
-                  Icons.add,
-                  color: Color(0xFF000000),
-                ),
-              ),
+              floatingActionButton: userState.value == null ||
+                      userState.value!.data.role == null ||
+                      userState.value!.data.role == "ROLE_MEMBER"
+                  ? null
+                  : FloatingActionButton(
+                      onPressed: () => context.go('/edit_notice'),
+                      backgroundColor: mainColor,
+                      shape: const CircleBorder(),
+                      child: const Icon(
+                        Icons.add,
+                        color: Color(0xFF000000),
+                      ),
+                    ),
               body: schedulesState.when<Widget>(data: (scheduleGroups) {
                 return Padding(
                   padding: EdgeInsets.fromLTRB(24.w, 24.w, 24.h, 0),

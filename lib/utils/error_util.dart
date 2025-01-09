@@ -1,3 +1,5 @@
+import 'package:support_flutter/utils/logging/logger.dart';
+
 enum FieldType { id, password, passwordConfirm, nickname, gender, dormType }
 
 class ErrorUtil {
@@ -6,6 +8,7 @@ class ErrorUtil {
   static final ErrorUtil instance = ErrorUtil._();
 
   String? getErrorMessage(String? code) {
+    logger.d(code);
     switch (code) {
       case "USR-F100": // 학교 이메일 공백
         return '학교 이메일을 입력해주세요!';

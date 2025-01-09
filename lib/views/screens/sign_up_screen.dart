@@ -430,7 +430,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               setState(() {});
                               logger.d(selectedDorm);
                             },
-                            initValue: selectedGender,
+                            initValue: selectedDorm,
                             hintText: '기숙사 동',
                             leftTopCornerRadius: 8.r,
                             rightTopCornerRadius: 8.r,

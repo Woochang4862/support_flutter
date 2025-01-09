@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:support_flutter/views/screens/change_pw_screen.dart';
 import 'package:support_flutter/views/screens/contact_screen.dart';
 import 'package:support_flutter/views/screens/edit_notice_screen.dart';
-import 'package:support_flutter/views/screens/edit_profile.dart';
+import 'package:support_flutter/views/screens/edit_profile_screen.dart';
 import 'package:support_flutter/views/screens/find_pw_screen.dart';
 import 'package:support_flutter/views/screens/login_screen.dart';
 import 'package:support_flutter/views/screens/main_screen.dart';

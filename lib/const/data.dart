@@ -21,6 +21,7 @@ final port = servers[SERVER]!['port'];
 
 const accessTokenKey = 'access_token';
 const refreshTokenKey = 'refresh_token';
+const roleKey = 'role';
 
 const dormTypes = [
   (label: '고운학사 A동', icon: SignUpIcons.ic_dorm),

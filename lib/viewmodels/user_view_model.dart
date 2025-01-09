@@ -1,15 +1,19 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:support_flutter/const/data.dart';
+import 'package:support_flutter/models/profile_model.dart';
 import 'package:support_flutter/models/user_model.dart';
 import 'package:support_flutter/repositories/login_repository.dart';
+import 'package:support_flutter/repositories/profile_repository.dart';
 import 'package:support_flutter/secure_storage/secure_storage.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
+import 'package:support_flutter/viewmodels/profile_view_model.dart';
 
 final userViewModelProvider =
     StateNotifierProvider<UserViewModel, AsyncValue<UserModel?>>((ref) {
   final loginRepository = ref.read(loginRepositoryProvider);
-  // final profileViewModel = ref.read(profileViewModelProvider.notifier);
+  final profileRepository = ref.read(profileRepositoryProvider);
   //final userMeRepository = ref.read(userMeRepositoryProvider);
 
   final storage = ref.read(secureStorageProvider);
@@ -17,7 +21,7 @@ final userViewModelProvider =
   return UserViewModel(
     loginRepository: loginRepository,
     //userMeRepository: userMeRepository,
-    // profileViewModel: profileViewModel,
+    profileRepository: profileRepository,
     storage: storage,
   );
 });
@@ -25,43 +29,41 @@ final userViewModelProvider =
 class UserViewModel extends StateNotifier<AsyncValue<UserModel?>> {
   final LoginRepository loginRepository;
   //final UserMeRepository userMeRepository;
-  // final ProfileViewModel profileViewModel;
+  final ProfileRepository profileRepository;
   final FlutterSecureStorage storage;
 
   UserViewModel({
     required this.loginRepository,
     //required this.userMeRepository,
-    // required this.profileViewModel,
+    required this.profileRepository,
     required this.storage,
-  }) : super(AsyncValue.data(null)) {
-    // getMe();
+  }) : super(AsyncData(null)) {
+    getMe();
   }
 
-  // Future<void> getMe() async {
-  //   try {
-  //     final profile = await profileViewModel.getProfile();
-  //     if (profile is ProfileModel) {
-  //       logger.d('로그인 정보 확인 성공! : $profile');
-  //     } else {
-  //       throw AutoLoginException(message:'로그인 정보 확인 실패! : $profile');
-  //     }
+  Future<void> getMe() async {
+    try {
+      final profile = await profileRepository.fetch();
+      logger.d('로그인 정보 확인 성공! : $profile');
 
-  //     final accessToken = await storage.read(key: accessTokenKey);
-  //     final refreshToken = await storage.read(key: refreshTokenKey);
-  //     state = AsyncValue.data(
-  //       UserModel(
-  //         data: LoginData(
-  //           accessToken: accessToken!,
-  //           refreshToken: refreshToken!,
-  //         ),
-  //         message: '자동 로그인됨',
-  //       ),
-  //     );
-  //   } catch (e) {
-  //     logger.e('로그인 정보 확인 실패! : $e');
-  //     state = AsyncValue.data(null);
-  //   }
-  // }
+      final accessToken = await storage.read(key: accessTokenKey);
+      final role = await storage.read(key: roleKey);
+      final refreshToken = await storage.read(key: refreshTokenKey);
+      state = AsyncValue.data(
+        UserModel(
+          data: LoginData(
+            accessToken: accessToken!,
+            refreshToken: refreshToken!,
+            role: role,
+          ),
+          statusMessage: '자동 로그인됨',
+        ),
+      );
+    } catch (e) {
+      logger.e('로그인 정보 확인 실패! : $e');
+      state = AsyncData(null);
+    }
+  }
 
   Future<UserModel> login({
     required String id,
@@ -74,28 +76,33 @@ class UserViewModel extends StateNotifier<AsyncValue<UserModel?>> {
       );
       logger.d('UserViewModel - 로그인 완료! $response');
 
+      Map<String, dynamic> payload =
+          JwtDecoder.decode(response.data.accessToken);
+
+      logger.d('login - payload : $payload');
+
       // secure storage에 Token 보관
       await storage.write(
           key: accessTokenKey, value: response.data.accessToken);
       await storage.write(
           key: refreshTokenKey, value: response.data.refreshToken);
+      await storage.write(key: roleKey, value: payload['auth']);
 
       // 디버깅용 확인 코드
       final accessToken = await storage.read(key: accessTokenKey);
       final refreshToken = await storage.read(key: refreshTokenKey);
+      final role = await storage.read(key: roleKey);
       logger.d(
-          'UserViewModel - AccessToken : $accessToken / RefreshToken : $refreshToken 저장 성공!');
-      state = AsyncValue.data(response); // UserModel
+          'UserViewModel - AccessToken : $accessToken / RefreshToken : $refreshToken / Role : $role 저장 성공!');
+      state = AsyncValue.data(response.setRole(role)); // UserModel
 
       return response;
     } on UserModelError catch (e) {
       // 단순로그인 실패 및 예상 범위 밖 에러(네트워크 에러 ...)
       logger.d(e);
-      await logout();
       rethrow;
     } catch (e) {
       logger.e('예외발생 - $e');
-      await logout();
       rethrow;
     }
   }
@@ -110,13 +117,15 @@ class UserViewModel extends StateNotifier<AsyncValue<UserModel?>> {
       await Future.wait([
         storage.delete(key: accessTokenKey),
         storage.delete(key: refreshTokenKey),
+        storage.delete(key: roleKey),
       ]);
 
       final accessToken = await storage.read(key: accessTokenKey);
       final refreshToken = await storage.read(key: refreshTokenKey);
+      final role = await storage.read(key: roleKey);
 
       logger.d(
-          'UserViewModel - AccessToken : $accessToken / RefreshToken : $refreshToken 삭제 성공!');
+          'UserViewModel - AccessToken : $accessToken / RefreshToken : $refreshToken / Role : $role 삭제 성공!');
 
       await loginRepository.logout(accessToken: _accessToken ?? "");
     } on UserModelError catch (e) {

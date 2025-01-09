@@ -13,7 +13,9 @@ _$ProfileModelImpl _$$ProfileModelImplFromJson(Map<String, dynamic> json) =>
       statusMessage: json['statusMessage'] as String,
       code: json['code'] as String?,
       responseTime: json['responseTime'] as String?,
-      data: Profile.fromJson(json['data'] as Map<String, dynamic>),
+      data: json['data'] == null
+          ? null
+          : Profile.fromJson(json['data'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$ProfileModelImplToJson(_$ProfileModelImpl instance) =>
@@ -23,11 +25,12 @@ Map<String, dynamic> _$$ProfileModelImplToJson(_$ProfileModelImpl instance) =>
       'statusMessage': instance.statusMessage,
       'code': instance.code,
       'responseTime': instance.responseTime,
-      'data': instance.data.toJson(),
+      'data': instance.data?.toJson(),
     };
 
 const _$ProfileModelTypeEnumMap = {
   ProfileModelType.fetch: 'fetch',
+  ProfileModelType.update: 'update',
 };
 
 _$ProfileImpl _$$ProfileImplFromJson(Map<String, dynamic> json) =>

@@ -94,8 +94,8 @@ class SignUpViewModel extends StateNotifier<AsyncValue<SignUpModel?>> {
         id: id,
         password: password,
         nickname: nickname,
-        gender: koreanToSymbolMap[gender]!,
-        dormType: dormTypeToSymbolMap[dormType]!,
+        gender: genderKoreanToSymbolMap[gender]!,
+        dormType: dormTypeKoreanToSymbolMap[dormType]!,
       );
       state = AsyncData(response);
     } on SignUpModelError catch (e) {
@@ -109,32 +109,32 @@ class SignUpViewModel extends StateNotifier<AsyncValue<SignUpModel?>> {
   }
 }
 
-final symbolToKoreanMap = {
+final genderSymbolToKoreanMap = {
   'MAN': '남성',
   'WOMAN': '여성',
 };
 
-final koreanToSymbolMap = {
+final genderKoreanToSymbolMap = {
   '남성': 'MAN',
   '여성': 'WOMAN',
 };
 
-final dormTypeToSymbolMap = {
+final dormTypeKoreanToSymbolMap = {
   '고운학사 A동': 'GounA',
   '고운학사 B동': 'GounB',
   '고운학사 C동': 'GounC',
-  '글로벌 경상관 11층': 'GyungM',
-  '글로벌 경상관 12층': 'GyungM',
-  '글로벌 경상관 13층': 'GyungW',
-  '글로벌 경상관 14층': 'GyungW',
+  '글로벌 경상관 11층': 'Gyung11',
+  '글로벌 경상관 12층': 'Gyung12',
+  '글로벌 경상관 13층': 'Gyung13',
+  '글로벌 경상관 14층': 'Gyung14',
 };
 
-final symbolToDormTypeMap = {
+final dormTypeSymbolToKoreanMap = {
   'GounA': '고운학사 A동',
   'GounB': '고운학사 B동',
   'GounC': '고운학사 C동',
-  'GyungM': '글로벌 경상관 11층',
-  // 'GyungM': '글로벌 경상관 12층',
-  'GyungW': '글로벌 경상관 13층',
-  // 'GyungW': '글로벌 경상관 14층',
+  'Gyung11': '글로벌 경상관 11층',
+  'Gyung12': '글로벌 경상관 12층',
+  'Gyung13': '글로벌 경상관 13층',
+  'Gyung14': '글로벌 경상관 14층',
 };

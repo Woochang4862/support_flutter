@@ -25,7 +25,7 @@ mixin _$ProfileModel {
   String get statusMessage => throw _privateConstructorUsedError;
   String? get code => throw _privateConstructorUsedError;
   String? get responseTime => throw _privateConstructorUsedError;
-  Profile get data => throw _privateConstructorUsedError;
+  Profile? get data => throw _privateConstructorUsedError;
 
   /// Serializes this ProfileModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -49,9 +49,9 @@ abstract class $ProfileModelCopyWith<$Res> {
       String statusMessage,
       String? code,
       String? responseTime,
-      Profile data});
+      Profile? data});
 
-  $ProfileCopyWith<$Res> get data;
+  $ProfileCopyWith<$Res>? get data;
 }
 
 /// @nodoc
@@ -74,7 +74,7 @@ class _$ProfileModelCopyWithImpl<$Res, $Val extends ProfileModel>
     Object? statusMessage = null,
     Object? code = freezed,
     Object? responseTime = freezed,
-    Object? data = null,
+    Object? data = freezed,
   }) {
     return _then(_value.copyWith(
       type: freezed == type
@@ -97,10 +97,10 @@ class _$ProfileModelCopyWithImpl<$Res, $Val extends ProfileModel>
           ? _value.responseTime
           : responseTime // ignore: cast_nullable_to_non_nullable
               as String?,
-      data: null == data
+      data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
-              as Profile,
+              as Profile?,
     ) as $Val);
   }
 
@@ -108,8 +108,12 @@ class _$ProfileModelCopyWithImpl<$Res, $Val extends ProfileModel>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $ProfileCopyWith<$Res> get data {
-    return $ProfileCopyWith<$Res>(_value.data, (value) {
+  $ProfileCopyWith<$Res>? get data {
+    if (_value.data == null) {
+      return null;
+    }
+
+    return $ProfileCopyWith<$Res>(_value.data!, (value) {
       return _then(_value.copyWith(data: value) as $Val);
     });
   }
@@ -129,10 +133,10 @@ abstract class _$$ProfileModelImplCopyWith<$Res>
       String statusMessage,
       String? code,
       String? responseTime,
-      Profile data});
+      Profile? data});
 
   @override
-  $ProfileCopyWith<$Res> get data;
+  $ProfileCopyWith<$Res>? get data;
 }
 
 /// @nodoc
@@ -153,7 +157,7 @@ class __$$ProfileModelImplCopyWithImpl<$Res>
     Object? statusMessage = null,
     Object? code = freezed,
     Object? responseTime = freezed,
-    Object? data = null,
+    Object? data = freezed,
   }) {
     return _then(_$ProfileModelImpl(
       type: freezed == type
@@ -176,10 +180,10 @@ class __$$ProfileModelImplCopyWithImpl<$Res>
           ? _value.responseTime
           : responseTime // ignore: cast_nullable_to_non_nullable
               as String?,
-      data: null == data
+      data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
-              as Profile,
+              as Profile?,
     ));
   }
 }
@@ -194,7 +198,7 @@ class _$ProfileModelImpl extends _ProfileModel {
       required this.statusMessage,
       this.code,
       this.responseTime,
-      required this.data})
+      this.data})
       : super._();
 
   factory _$ProfileModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -211,7 +215,7 @@ class _$ProfileModelImpl extends _ProfileModel {
   @override
   final String? responseTime;
   @override
-  final Profile data;
+  final Profile? data;
 
   @override
   String toString() {
@@ -262,7 +266,7 @@ abstract class _ProfileModel extends ProfileModel {
       required final String statusMessage,
       final String? code,
       final String? responseTime,
-      required final Profile data}) = _$ProfileModelImpl;
+      final Profile? data}) = _$ProfileModelImpl;
   _ProfileModel._() : super._();
 
   factory _ProfileModel.fromJson(Map<String, dynamic> json) =
@@ -279,7 +283,7 @@ abstract class _ProfileModel extends ProfileModel {
   @override
   String? get responseTime;
   @override
-  Profile get data;
+  Profile? get data;
 
   /// Create a copy of ProfileModel
   /// with the given fields replaced by the non-null parameter values.

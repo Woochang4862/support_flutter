@@ -2,8 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:support_flutter/models/find_pw_model.dart';
 import 'package:support_flutter/repositories/find_pw_repository.dart';
 
-final findPWViewModelProvider =
-    StateNotifierProvider<FindPwViewModel, AsyncValue<FindPWModel?>>((ref) {
+final findPWViewModelProvider = StateNotifierProvider.autoDispose<
+    FindPwViewModel, AsyncValue<FindPWModel?>>((ref) {
   final findPWRepository = ref.read(findPWRepositoryProvider);
   return FindPwViewModel(findPWRepository: findPWRepository);
 });

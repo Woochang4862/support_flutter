@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/viewmodels/profile_view_model.dart';
+import 'package:support_flutter/viewmodels/sign_up_view_model.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -121,7 +122,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     ),
                                     TableCell(
                                       child: Text(
-                                        profile!.data.nickname,
+                                        profile!.data!.nickname,
                                         style: TextStyle(
                                           fontSize: 14.sp,
                                           fontWeight: FontWeight.w400,
@@ -135,7 +136,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   children: [
                                     TableCell(
                                       child: Text(
-                                        '이름',
+                                        '성별',
                                         style: TextStyle(
                                           fontSize: 14.sp,
                                           fontWeight: FontWeight.w400,
@@ -155,7 +156,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     ),
                                     TableCell(
                                       child: Text(
-                                        profile.data.nickname,
+                                        genderSymbolToKoreanMap[
+                                            profile.data!.gender]!,
                                         style: TextStyle(
                                           fontSize: 14.sp,
                                           fontWeight: FontWeight.w400,
@@ -189,7 +191,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     ),
                                     TableCell(
                                       child: Text(
-                                        profile.data.dormType,
+                                        dormTypeSymbolToKoreanMap[
+                                            profile.data!.dormType]!,
                                         style: TextStyle(
                                           fontSize: 14.sp,
                                           fontWeight: FontWeight.w400,

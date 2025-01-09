@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:support_flutter/const/data.dart';
+import 'package:support_flutter/models/user_model.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
 
 class TokenInterceptor extends Interceptor {
@@ -84,12 +86,8 @@ class TokenInterceptor extends Interceptor {
 
       try {
         final response = await dio.post(
-          'http://$host:$port/auth/refresh-token',
-          options: Options(
-            headers: {
-              'Cookie': 'refreshToken=$refreshToken',
-            },
-          ),
+          'http://$host:$port/member/token/refresh',
+          data: {'refreshToken': refreshToken},
         );
 
         logger.d(response.data);
@@ -104,23 +102,25 @@ class TokenInterceptor extends Interceptor {
             type: DioExceptionType.cancel,
           );
         }
-        // final data = UserModel.fromJson(response.data).data;
+        final data = UserModel.fromJson(response.data).data;
 
-        // final accessToken = data.accessToken;
-        // final newRefreshToken = data.refreshToken;
+        final accessToken = data.accessToken;
+        final newRefreshToken = data.refreshToken;
 
-        // final payload = JwtDecoder.decode(accessToken);
+        final payload = JwtDecoder.decode(accessToken);
 
-        // logger.d('onError - payload - $payload');
+        logger.d('onError - payload - $payload');
         // secure storage도 update
-        // await storage.write(key: accessTokenKey, value: accessToken);
-        // await storage.write(key: refreshTokenKey, value: newRefreshToken);
+        await storage.write(key: accessTokenKey, value: accessToken);
+        await storage.write(key: refreshTokenKey, value: newRefreshToken);
+        await storage.write(key: roleKey, value: payload['role']);
 
-        // // 디버깅용 확인 코드
-        // final _accessToken = await storage.read(key: accessTokenKey);
-        // final _refreshToken = await storage.read(key: refreshTokenKey);
-        // logger.d(
-        //     'onError - AccessToken : $_accessToken / RefreshToken : $_refreshToken 저장 성공!');
+        // 디버깅용 확인 코드
+        final _accessToken = await storage.read(key: accessTokenKey);
+        final _refreshToken = await storage.read(key: refreshTokenKey);
+        final _role = await storage.read(key: roleKey);
+        logger.d(
+            'onError - AccessToken : $_accessToken / RefreshToken : $_refreshToken / Role : $_role 저장 성공!');
 
         final options = err.requestOptions;
 

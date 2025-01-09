@@ -151,6 +151,7 @@ class _RoundedDropdownState extends State<RoundedDropdown> {
                     onTap: () {
                       _selectedValue = label;
                       _dropdownController.toggle();
+                      setState(() {});
                       widget.onChanged(label);
                     },
                     child: Container(

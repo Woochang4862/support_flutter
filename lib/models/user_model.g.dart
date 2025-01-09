@@ -27,12 +27,14 @@ Map<String, dynamic> _$$UserModelImplToJson(_$UserModelImpl instance) =>
 _$LoginDataImpl _$$LoginDataImplFromJson(Map<String, dynamic> json) =>
     _$LoginDataImpl(
       accessToken: json['accessToken'] as String,
+      role: json['role'] as String?,
       refreshToken: json['refreshToken'] as String,
     );
 
 Map<String, dynamic> _$$LoginDataImplToJson(_$LoginDataImpl instance) =>
     <String, dynamic>{
       'accessToken': instance.accessToken,
+      'role': instance.role,
       'refreshToken': instance.refreshToken,
     };
 

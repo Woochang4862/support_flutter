@@ -173,13 +173,14 @@ class __$$UserModelImplCopyWithImpl<$Res>
 /// @nodoc
 
 @JsonSerializable(explicitToJson: true)
-class _$UserModelImpl implements _UserModel {
-  const _$UserModelImpl(
+class _$UserModelImpl extends _UserModel {
+  _$UserModelImpl(
       {this.statusCode,
       required this.statusMessage,
       this.responseTime,
       required this.data,
-      this.code});
+      this.code})
+      : super._();
 
   factory _$UserModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserModelImplFromJson(json);
@@ -236,13 +237,14 @@ class _$UserModelImpl implements _UserModel {
   }
 }
 
-abstract class _UserModel implements UserModel {
-  const factory _UserModel(
+abstract class _UserModel extends UserModel {
+  factory _UserModel(
       {final int? statusCode,
       required final String statusMessage,
       final String? responseTime,
       required final LoginData data,
       final String? code}) = _$UserModelImpl;
+  _UserModel._() : super._();
 
   factory _UserModel.fromJson(Map<String, dynamic> json) =
       _$UserModelImpl.fromJson;
@@ -273,6 +275,7 @@ LoginData _$LoginDataFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$LoginData {
   String get accessToken => throw _privateConstructorUsedError;
+  String? get role => throw _privateConstructorUsedError;
   String get refreshToken => throw _privateConstructorUsedError;
 
   /// Serializes this LoginData to a JSON map.
@@ -290,7 +293,7 @@ abstract class $LoginDataCopyWith<$Res> {
   factory $LoginDataCopyWith(LoginData value, $Res Function(LoginData) then) =
       _$LoginDataCopyWithImpl<$Res, LoginData>;
   @useResult
-  $Res call({String accessToken, String refreshToken});
+  $Res call({String accessToken, String? role, String refreshToken});
 }
 
 /// @nodoc
@@ -309,6 +312,7 @@ class _$LoginDataCopyWithImpl<$Res, $Val extends LoginData>
   @override
   $Res call({
     Object? accessToken = null,
+    Object? role = freezed,
     Object? refreshToken = null,
   }) {
     return _then(_value.copyWith(
@@ -316,6 +320,10 @@ class _$LoginDataCopyWithImpl<$Res, $Val extends LoginData>
           ? _value.accessToken
           : accessToken // ignore: cast_nullable_to_non_nullable
               as String,
+      role: freezed == role
+          ? _value.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as String?,
       refreshToken: null == refreshToken
           ? _value.refreshToken
           : refreshToken // ignore: cast_nullable_to_non_nullable
@@ -332,7 +340,7 @@ abstract class _$$LoginDataImplCopyWith<$Res>
       __$$LoginDataImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String accessToken, String refreshToken});
+  $Res call({String accessToken, String? role, String refreshToken});
 }
 
 /// @nodoc
@@ -349,6 +357,7 @@ class __$$LoginDataImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? accessToken = null,
+    Object? role = freezed,
     Object? refreshToken = null,
   }) {
     return _then(_$LoginDataImpl(
@@ -356,6 +365,10 @@ class __$$LoginDataImplCopyWithImpl<$Res>
           ? _value.accessToken
           : accessToken // ignore: cast_nullable_to_non_nullable
               as String,
+      role: freezed == role
+          ? _value.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as String?,
       refreshToken: null == refreshToken
           ? _value.refreshToken
           : refreshToken // ignore: cast_nullable_to_non_nullable
@@ -366,8 +379,10 @@ class __$$LoginDataImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$LoginDataImpl implements _LoginData {
-  _$LoginDataImpl({required this.accessToken, required this.refreshToken});
+class _$LoginDataImpl extends _LoginData {
+  _$LoginDataImpl(
+      {required this.accessToken, this.role, required this.refreshToken})
+      : super._();
 
   factory _$LoginDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$LoginDataImplFromJson(json);
@@ -375,11 +390,13 @@ class _$LoginDataImpl implements _LoginData {
   @override
   final String accessToken;
   @override
+  final String? role;
+  @override
   final String refreshToken;
 
   @override
   String toString() {
-    return 'LoginData(accessToken: $accessToken, refreshToken: $refreshToken)';
+    return 'LoginData(accessToken: $accessToken, role: $role, refreshToken: $refreshToken)';
   }
 
   @override
@@ -389,13 +406,14 @@ class _$LoginDataImpl implements _LoginData {
             other is _$LoginDataImpl &&
             (identical(other.accessToken, accessToken) ||
                 other.accessToken == accessToken) &&
+            (identical(other.role, role) || other.role == role) &&
             (identical(other.refreshToken, refreshToken) ||
                 other.refreshToken == refreshToken));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, accessToken, refreshToken);
+  int get hashCode => Object.hash(runtimeType, accessToken, role, refreshToken);
 
   /// Create a copy of LoginData
   /// with the given fields replaced by the non-null parameter values.
@@ -413,16 +431,20 @@ class _$LoginDataImpl implements _LoginData {
   }
 }
 
-abstract class _LoginData implements LoginData {
+abstract class _LoginData extends LoginData {
   factory _LoginData(
       {required final String accessToken,
+      final String? role,
       required final String refreshToken}) = _$LoginDataImpl;
+  _LoginData._() : super._();
 
   factory _LoginData.fromJson(Map<String, dynamic> json) =
       _$LoginDataImpl.fromJson;
 
   @override
   String get accessToken;
+  @override
+  String? get role;
   @override
   String get refreshToken;
 
