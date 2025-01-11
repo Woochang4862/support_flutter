@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:support_flutter/const/data.dart';
 
 class EditNoticeScreen extends ConsumerStatefulWidget {
@@ -67,9 +66,7 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                               backgroundColor: const Color(0xFF4F7BD0),
                               surfaceTintColor: const Color(0xFF4F7BD0),
                               foregroundColor: mainColor,
-                              side: BorderSide(
-                                width: 0,
-                              ),
+                              side: BorderSide.none,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.r),
                               ),

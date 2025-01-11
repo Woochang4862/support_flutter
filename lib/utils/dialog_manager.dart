@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide DateRangePickerDialog;
 import 'package:support_flutter/views/widgets/alert_text_dialog.dart';
+import 'package:support_flutter/views/widgets/date_range_picker_dialog.dart';
 
 class DialogManager {
   DialogManager._();
@@ -35,5 +36,20 @@ class DialogManager {
         onRightButtonPressed: onRightButtonPressed,
       ),
     );
+  }
+
+  Future<void> showDateRangePickerDialog({
+    required BuildContext context,
+    Function(DateTimeRange? selecteDateRange)? onComplete,
+    required DateTime firstDate,
+    required DateTime lastDate,
+    barrierDismissible = true,
+  }) async {
+    final result = await showDialog<DateTimeRange?>(
+      barrierDismissible: barrierDismissible,
+      context: context,
+      builder: (_) => DateRangePickerDialog(),
+    );
+    onComplete?.call(result);
   }
 }

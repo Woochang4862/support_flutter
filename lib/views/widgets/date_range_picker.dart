@@ -1,32 +1,25 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:support_flutter/const/data.dart';
-import 'package:support_flutter/models/schedules_model.dart';
 import 'package:support_flutter/utils/extensions.dart';
-import 'package:support_flutter/views/widgets/schedules_simple_view.dart';
+import 'package:support_flutter/utils/logging/logger.dart';
 
-class SchedulesView extends ConsumerStatefulWidget {
-  SchedulesView({
+class DateRangePicker extends StatefulWidget {
+  DateRangePicker({
     super.key,
     required this.displayDate,
-    required this.schedules,
-    required this.onSelectionChanged,
-    required this.onMonthChanged,
   });
 
   DateTime displayDate;
-  final Map<String, List<Schedule>> schedules;
-  final Function(DateTime selectedDate) onSelectionChanged;
-  final Function(DateTime date) onMonthChanged;
 
   @override
-  _SchedulesViewState createState() => _SchedulesViewState();
+  _DateRangePickerState createState() => _DateRangePickerState();
 }
 
-class _SchedulesViewState extends ConsumerState<SchedulesView> {
+class _DateRangePickerState extends State<DateRangePicker> {
   final Map<String, Color> _days = <String, Color>{
     '일': Color(0xFFFF8888),
     '월': Color(0xFF7C7C7C),
@@ -36,18 +29,13 @@ class _SchedulesViewState extends ConsumerState<SchedulesView> {
     '금': Color(0xFF7C7C7C),
     '토': Color(0xFF1270B0),
   };
-  late DateTime _selectedDate;
+
+  final headerDateFormat = DateFormat("yyyy년 M월");
+  DateTime? _tempDate;
+  DateTimeRange? selectedRange;
 
   @override
   void initState() {
-    final now = DateTime.now();
-    if (now.year == widget.displayDate.year &&
-        now.month == widget.displayDate.month) {
-      _selectedDate = DateTime(now.year, now.month, now.day);
-    } else {
-      _selectedDate =
-          DateTime(widget.displayDate.year, widget.displayDate.month, 1);
-    }
     super.initState();
   }
 
@@ -82,7 +70,7 @@ class _SchedulesViewState extends ConsumerState<SchedulesView> {
               ),
             ),
             Text(
-              widget.displayDate.format('yyyy년 M월'),
+              headerDateFormat.format(widget.displayDate),
               style: TextStyle(
                 fontSize: 14.sp,
               ),
@@ -140,10 +128,37 @@ class _SchedulesViewState extends ConsumerState<SchedulesView> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children:
                 _buildCalendar(widget.displayDate, (DateTime selectedDate) {
+              if (_tempDate?.equal(selectedDate) ?? false) return;
               setState(() {
-                _selectedDate = selectedDate;
+                logger.d(selectedRange);
+                logger.d(_tempDate);
+                // selectedRange == null && tempDate == null -> tempDate = selectedDate
+                // selectedRange == null && tempDate != null -> 날짜 비교해서 selectedRange 생성, tempDate = null
+                // selectedRange != null -> selectedRange == null, tempDate = selectedDate
+                // start < ... < end
+                // ... < start < end
+                // start < end < ...
+                if (selectedRange == null) {
+                  if (_tempDate == null) {
+                    _tempDate = selectedDate;
+                  } else {
+                    if (selectedDate.isGreaterThan(_tempDate!)) {
+                      selectedRange =
+                          DateTimeRange(start: _tempDate!, end: selectedDate);
+                    } else {
+                      selectedRange =
+                          DateTimeRange(start: selectedDate, end: _tempDate!);
+                    }
+                    _tempDate = null;
+                  }
+                } else {
+                  _tempDate = selectedDate;
+                  selectedRange = null;
+                }
+
+                logger.d(selectedRange);
+                logger.d(_tempDate);
               });
-              widget.onSelectionChanged(_selectedDate);
             }),
           ),
         ),
@@ -156,17 +171,6 @@ class _SchedulesViewState extends ConsumerState<SchedulesView> {
 
   void addMonth(int monthToAdd) {
     widget.displayDate = widget.displayDate.addDate(monthToAdd: monthToAdd);
-    widget.onMonthChanged(widget.displayDate);
-
-    final now = DateTime.now();
-    if (now.year == widget.displayDate.year &&
-        now.month == widget.displayDate.month) {
-      _selectedDate = DateTime(now.year, now.month, now.day);
-    } else {
-      _selectedDate =
-          DateTime(widget.displayDate.year, widget.displayDate.month, 1);
-    }
-    widget.onSelectionChanged(_selectedDate);
   }
 
   List<Widget> _buildCalendar(
@@ -208,55 +212,78 @@ class _SchedulesViewState extends ConsumerState<SchedulesView> {
           currentDay++;
         } else {
           text = '$currentDay';
-          final now = DateTime.now();
           selectedDate = DateTime(date.year, date.month, currentDay);
-          if (currentDay == now.day &&
-              date.month == now.month &&
-              date.year == now.year &&
-              !_selectedDate.equal(selectedDate)) {
-            color = Color(0xFFF49446);
-          } else {
-            color = Colors.black;
-          }
+          color = Colors.black;
           currentDay++;
         }
 
-        if (_selectedDate.equal(selectedDate)) {
+        if ((selectedRange?.start.equal(selectedDate) ?? false) ||
+            (selectedRange?.end.equal(selectedDate) ?? false)) {
           color = mainColor;
+        } else if (selectedRange?.contains(selectedDate, closedRange: false) ??
+            false) {
+          color = accentColor;
         }
+
+        final isStartOfRange =
+            selectedRange?.start.equal(selectedDate) ?? false;
+        final isEndOfRange = selectedRange?.end.equal(selectedDate) ?? false;
+        final isBetween =
+            selectedRange?.contains(selectedDate, closedRange: false) ?? false;
+
+        final frontColor =
+            isBetween || isEndOfRange ? accentColor.withAlpha(100) : null;
+        final backColor =
+            isBetween || isStartOfRange ? accentColor.withAlpha(100) : null;
 
         days.add(
           Flexible(
-            child: InkWell(
-              onTap: () {
-                onTap(selectedDate);
-              },
-              child: Column(
-                children: [
-                  Flexible(
-                    child: Container(
-                      decoration: _selectedDate.equal(selectedDate)
-                          ? BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: const Color(0xFFF49446),
-                            )
-                          : null,
-                      child: Center(
-                        child: Text(
-                          text,
-                          style: TextStyle(color: color),
+            child: Material(
+              color: mainColor,
+              child: InkWell(
+                onTap: () {
+                  onTap(selectedDate);
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Row(
+                        children: [
+                          Flexible(
+                              child: Container(
+                            height: 24.h,
+                            color: frontColor,
+                          )),
+                          Flexible(
+                              child: Container(
+                            color: backColor,
+                            height: 24.h,
+                          )),
+                        ],
+                      ),
+                      Container(
+                        width: 24.w,
+                        height: 24.h,
+                        decoration: isStartOfRange || isEndOfRange
+                            ? BoxDecoration(
+                                shape: BoxShape.rectangle,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(4.r)),
+                                color: accentColor,
+                              )
+                            : null,
+                        child: Center(
+                          child: Text(
+                            text,
+                            style: TextStyle(color: color),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                  Flexible(
-                    child: SchedulesSimpleView(
-                      schedules:
-                          widget.schedules[selectedDate.format('yyyy-MM-dd')] ??
-                              [],
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),

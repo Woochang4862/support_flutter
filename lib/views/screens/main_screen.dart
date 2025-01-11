@@ -6,6 +6,7 @@ import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/utils/dialog_manager.dart';
 import 'package:support_flutter/utils/icons/support_app_appbar_icons.dart';
 import 'package:support_flutter/utils/icons/support_app_icons.dart';
+import 'package:support_flutter/utils/logging/logger.dart';
 import 'package:support_flutter/viewmodels/user_view_model.dart';
 import 'package:support_flutter/views/screens/community_screen.dart';
 import 'package:support_flutter/views/screens/delivery_screen.dart';
@@ -100,7 +101,17 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                   size: 22.w,
                 ),
                 onPressed: () {
-                  context.go('/notice');
+                  // context.go('/notice');
+                  DialogManager.instance.showDateRangePickerDialog(
+                    context: context,
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime.now().add(
+                      Duration(days: 90),
+                    ),
+                    onComplete: (selecteDateRange) {
+                      logger.d(selecteDateRange);
+                    },
+                  );
                 },
               ),
             )
