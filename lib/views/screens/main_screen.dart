@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/utils/dialog_manager.dart';
+import 'package:support_flutter/utils/icons/menu_icons_icons.dart';
 import 'package:support_flutter/utils/icons/support_app_appbar_icons.dart';
 import 'package:support_flutter/utils/icons/support_app_icons.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
@@ -21,6 +22,11 @@ class MainScreen extends ConsumerStatefulWidget {
   _MainScreenState createState() => _MainScreenState();
 }
 
+typedef Menu = ({
+  IconData icon,
+  Function(BuildContext context, WidgetRef ref) routeFunc,
+});
+
 class _MainScreenState extends ConsumerState<MainScreen> {
   var _index = 0;
   static const List _pages = [
@@ -35,34 +41,49 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     "공동배달",
     "커뮤니티",
   ];
-  final Map<String, Function(BuildContext, WidgetRef)> _logOutMenu = {
-    "로그인": (context, _) {
-      context.go('/login');
-    },
+  final Map<String, Menu> _logOutMenu = {
+    "로그인": (
+      icon: MenuIcons.ic_login,
+      routeFunc: (context, _) {
+        context.go('/login');
+      },
+    ),
   };
-  final Map<String, Function(BuildContext, WidgetRef)> _logInMenu = {
-    "내 정보": (context, _) {
-      context.go('/profile');
-    },
-    "문의하기": (context, _) {
-      context.go('/contact');
-    },
-    "개인정보 동의": (context, _) {
-      context.go('/policy');
-    },
-    "로그아웃": (context, ref) {
-      DialogManager.instance.showAlertDialog(
-        context: context,
-        content: 'Support 에서 로그아웃 하시겠습니까?',
-        leftButtonText: '취소',
-        rightButtonText: '로그아웃',
-        onRightButtonPressed: () {
-          ref.read(userViewModelProvider.notifier).logout();
-        },
-      );
-    },
+  final Map<String, Menu> _logInMenu = {
+    "내 정보": (
+      icon: MenuIcons.ic_person,
+      routeFunc: (context, _) {
+        context.go('/profile');
+      },
+    ),
+    "문의하기": (
+      icon: MenuIcons.ic_phone,
+      routeFunc: (context, _) {
+        context.go('/contact');
+      },
+    ),
+    "개인정보 동의": (
+      icon: MenuIcons.ic_file,
+      routeFunc: (context, _) {
+        context.go('/policy');
+      },
+    ),
+    "로그아웃": (
+      icon: MenuIcons.ic_logout,
+      routeFunc: (context, ref) {
+        DialogManager.instance.showAlertDialog(
+          context: context,
+          content: 'Support 에서 로그아웃 하시겠습니까?',
+          leftButtonText: '취소',
+          rightButtonText: '로그아웃',
+          onRightButtonPressed: () {
+            ref.read(userViewModelProvider.notifier).logout();
+          },
+        );
+      },
+    ),
   };
-  Map<String, Function(BuildContext, WidgetRef)> _currentMenu = {};
+  Map<String, Menu> _currentMenu = {};
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -133,19 +154,29 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                   color: mainColor,
                   child: InkWell(
                     onTap: () {
-                      _currentMenu.entries.toList()[index].value(context, ref);
+                      _currentMenu.entries
+                          .toList()[index]
+                          .value
+                          .routeFunc(context, ref);
                     },
                     child: Container(
                       padding: EdgeInsets.only(left: 32.w),
                       height: 40.h,
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          _currentMenu.keys.toList()[index],
-                          style: TextStyle(
-                            fontSize: 14.sp,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(
+                            _currentMenu.entries.toList()[index].value.icon,
+                            size: 15.w,
                           ),
-                        ),
+                          SizedBox(width: 10.w),
+                          Text(
+                            _currentMenu.keys.toList()[index],
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

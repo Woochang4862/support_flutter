@@ -311,11 +311,9 @@ class _ChangePwScreenState extends ConsumerState<ChangePwScreen> {
                                       );
                                 },
                           style: OutlinedButton.styleFrom(
-                            backgroundColor: const Color(0xFF000000),
+                            backgroundColor: accentColor,
                             foregroundColor: const Color(0xFFFFFFFF),
-                            side: const BorderSide(
-                              width: 0.0,
-                            ),
+                            side: BorderSide.none,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.r),
                             ),
@@ -367,20 +365,5 @@ class _ChangePwScreenState extends ConsumerState<ChangePwScreen> {
       }
     }
     return false;
-  }
-
-  void showAlertDialog(
-      BuildContext context, String text, Function()? onConfirmPressed) async {
-    // await showDialog(
-    //     context: context,
-    //     builder: (_) => AlertTextDialog(
-    //           text: text,
-    //           onConfirmPressed: () async {
-    //             Navigator.of(context).pop();
-    //             if (onConfirmPressed != null) {
-    //               await onConfirmPressed();
-    //             }
-    //           },
-    //         ));
   }
 }

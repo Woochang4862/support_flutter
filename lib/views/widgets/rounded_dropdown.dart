@@ -126,28 +126,29 @@ class _RoundedDropdownState extends State<RoundedDropdown> {
       child: CompositedTransformFollower(
         offset: Offset(0, 48.h),
         link: _layerLink,
-        child: Material(
-          child: Container(
-            constraints: widget.maxHeight != null
-                ? BoxConstraints(
-                    maxHeight: widget.maxHeight!,
-                  )
-                : null,
-            decoration: BoxDecoration(
-              color: mainColor,
-              borderRadius: BorderRadius.circular(5.r),
-              border: Border.all(
-                color: Colors.grey,
-                width: 1.w,
-              ),
+        child: Container(
+          constraints: widget.maxHeight != null
+              ? BoxConstraints(
+                  maxHeight: widget.maxHeight!,
+                )
+              : null,
+          decoration: BoxDecoration(
+            color: mainColor,
+            borderRadius: BorderRadius.circular(5.r),
+            border: Border.all(
+              color: Color(0xFFBFBFBF),
+              width: 1.w,
             ),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: widget.items.map((e) {
-                  final label = e.label;
-                  final icon = e.icon;
-                  return InkWell(
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: widget.items.map((e) {
+                final label = e.label;
+                final icon = e.icon;
+                return Material(
+                  color: mainColor,
+                  child: InkWell(
                     onTap: () {
                       _selectedValue = label;
                       _dropdownController.toggle();
@@ -186,9 +187,9 @@ class _RoundedDropdownState extends State<RoundedDropdown> {
                         ],
                       ),
                     ),
-                  );
-                }).toList(),
-              ),
+                  ),
+                );
+              }).toList(),
             ),
           ),
         ),
