@@ -12,6 +12,18 @@ extension DateTimeRangeExt on DateTimeRange {
           end.isGreaterThan(date);
     }
   }
+
+  bool equals(DateTimeRange? range) {
+    if (range == null) {
+      return false;
+    }
+
+    if (this == range || start.equal(range.start) && end.equal(range.end)) {
+      return true;
+    }
+
+    return false;
+  }
 }
 
 extension DateTimeExt on DateTime {
@@ -31,7 +43,8 @@ extension DateTimeExt on DateTime {
     );
   }
 
-  bool equal(DateTime o) {
+  bool equal(DateTime? o) {
+    if (o == null) return false;
     return year == o.year && month == o.month && day == o.day;
   }
 

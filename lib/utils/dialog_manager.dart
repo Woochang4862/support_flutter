@@ -18,6 +18,8 @@ class DialogManager {
     required BuildContext context,
     String? title,
     String? content,
+    TextStyle? titleStyle,
+    TextStyle? contentStyle,
     String? leftButtonText,
     String? rightButtonText,
     Function()? onLeftButtonPressed,
@@ -30,6 +32,8 @@ class DialogManager {
       builder: (_) => AlertTextDialog(
         title: title ?? "알림",
         content: content,
+        titleStyle: titleStyle,
+        contentStyle: contentStyle,
         leftButtonText: rightButtonText == null ? '확인' : leftButtonText,
         rightButtonText: rightButtonText,
         onLeftButtonPressed: onLeftButtonPressed,
@@ -40,12 +44,12 @@ class DialogManager {
 
   Future<void> showDateRangePickerDialog({
     required BuildContext context,
-    Function(DateTimeRange? selecteDateRange)? onComplete,
+    Function(Object? selecteDateRange)? onComplete,
     required DateTime firstDate,
     required DateTime lastDate,
     barrierDismissible = true,
   }) async {
-    final result = await showDialog<DateTimeRange?>(
+    final result = await showDialog<Object?>(
       barrierDismissible: barrierDismissible,
       context: context,
       builder: (_) => DateRangePickerDialog(),

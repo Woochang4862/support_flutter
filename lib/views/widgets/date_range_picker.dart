@@ -1,5 +1,7 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -11,16 +13,18 @@ class DateRangePicker extends StatefulWidget {
   DateRangePicker({
     super.key,
     required this.displayDate,
+    this.controller,
   });
 
   DateTime displayDate;
+  DateRangePickerController? controller;
 
   @override
   _DateRangePickerState createState() => _DateRangePickerState();
 }
 
 class _DateRangePickerState extends State<DateRangePicker> {
-  final Map<String, Color> _days = <String, Color>{
+  final Map<String, Color> _days = const <String, Color>{
     '일': Color(0xFFFF8888),
     '월': Color(0xFF7C7C7C),
     '화': Color(0xFF7C7C7C),
@@ -130,14 +134,9 @@ class _DateRangePickerState extends State<DateRangePicker> {
                 _buildCalendar(widget.displayDate, (DateTime selectedDate) {
               if (_tempDate?.equal(selectedDate) ?? false) return;
               setState(() {
-                logger.d(selectedRange);
-                logger.d(_tempDate);
                 // selectedRange == null && tempDate == null -> tempDate = selectedDate
                 // selectedRange == null && tempDate != null -> 날짜 비교해서 selectedRange 생성, tempDate = null
                 // selectedRange != null -> selectedRange == null, tempDate = selectedDate
-                // start < ... < end
-                // ... < start < end
-                // start < end < ...
                 if (selectedRange == null) {
                   if (_tempDate == null) {
                     _tempDate = selectedDate;
@@ -155,7 +154,8 @@ class _DateRangePickerState extends State<DateRangePicker> {
                   _tempDate = selectedDate;
                   selectedRange = null;
                 }
-
+                widget.controller?.selectedDate = _tempDate;
+                widget.controller?.selectedRange = selectedRange;
                 logger.d(selectedRange);
                 logger.d(_tempDate);
               });
@@ -230,6 +230,8 @@ class _DateRangePickerState extends State<DateRangePicker> {
         final isEndOfRange = selectedRange?.end.equal(selectedDate) ?? false;
         final isBetween =
             selectedRange?.contains(selectedDate, closedRange: false) ?? false;
+        final isTempDate = _tempDate?.equal(selectedDate) ?? false;
+        color = isTempDate ? Colors.white : color;
 
         final frontColor =
             isBetween || isEndOfRange ? accentColor.withAlpha(100) : null;
@@ -266,7 +268,7 @@ class _DateRangePickerState extends State<DateRangePicker> {
                       Container(
                         width: 24.w,
                         height: 24.h,
-                        decoration: isStartOfRange || isEndOfRange
+                        decoration: isStartOfRange || isEndOfRange || isTempDate
                             ? BoxDecoration(
                                 shape: BoxShape.rectangle,
                                 borderRadius:
@@ -297,5 +299,29 @@ class _DateRangePickerState extends State<DateRangePicker> {
       ));
     }
     return rows;
+  }
+}
+
+class DateRangePickerController {
+  DateTime? _selectedDate;
+  DateTimeRange? _selectedRange;
+
+  DateTime? get selectedDate => _selectedDate;
+  DateTimeRange? get selectedRange => _selectedRange;
+
+  set selectedDate(DateTime? date) {
+    if (_selectedDate?.equal(date) ?? false) {
+      return;
+    }
+
+    _selectedDate = date;
+  }
+
+  set selectedRange(DateTimeRange? range) {
+    if (_selectedRange?.equals(range) ?? false) {
+      return;
+    }
+
+    _selectedRange = range;
   }
 }

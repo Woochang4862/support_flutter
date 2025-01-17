@@ -12,6 +12,7 @@ class DateRangePickerDialog extends StatefulWidget {
 }
 
 class _DateRangePickerDialogState extends State<DateRangePickerDialog> {
+  DateRangePickerController controller = DateRangePickerController();
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -32,18 +33,23 @@ class _DateRangePickerDialogState extends State<DateRangePickerDialog> {
                         horizontal: 15.h,
                       ),
                       child: DateRangePicker(
+                        controller: controller,
                         displayDate: DateTime.now(),
                       ),
                     ),
                     SizedBox.fromSize(
                       size: Size.fromHeight(0.5.h),
-                      child: DecoratedBox(
+                      child: const DecoratedBox(
                         decoration: BoxDecoration(color: Color(0xFFCECECE)),
                       ),
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).pop();
+                        if (controller.selectedDate == null) {
+                          Navigator.of(context).pop(controller.selectedRange);
+                        } else {
+                          Navigator.of(context).pop(controller.selectedDate);
+                        }
                       },
                       style: TextButton.styleFrom(
                         minimumSize: Size.fromHeight(50.h),

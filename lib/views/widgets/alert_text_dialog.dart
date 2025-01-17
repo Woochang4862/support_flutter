@@ -8,6 +8,8 @@ class AlertTextDialog extends StatefulWidget {
     Key? key,
     this.title,
     this.content,
+    this.titleStyle,
+    this.contentStyle,
     this.onLeftButtonPressed,
     this.onRightButtonPressed,
     this.leftButtonText,
@@ -16,6 +18,8 @@ class AlertTextDialog extends StatefulWidget {
 
   final String? title;
   final String? content;
+  final TextStyle? titleStyle;
+  final TextStyle? contentStyle;
   final void Function()? onLeftButtonPressed, onRightButtonPressed;
   final String? leftButtonText, rightButtonText;
 
