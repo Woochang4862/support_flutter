@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:support_flutter/const/data.dart';
+import 'package:support_flutter/utils/dialog_manager.dart';
+import 'package:support_flutter/views/widgets/date_range_picker_dialog.dart';
+import 'package:intl/intl.dart';
 
 class EditNoticeScreen extends ConsumerStatefulWidget {
   const EditNoticeScreen({super.key});
@@ -16,23 +19,22 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
 
-  String startDate = '2024-10-13';
-  String endDate = '2024-10-17';
+  DateTime? startDate;
+  DateTime? endDate;
 
   @override
   Widget build(BuildContext context) {
     contentController.addListener(() {});
-
     titleController.addListener(() {});
 
     return ScreenUtilInit(
-        designSize: const Size(375, 812),
+        designSize: const Size(375, 812), // 디자인 기준 사이즈 설정
         builder: (context, child) => Scaffold(
               appBar: AppBar(
-                automaticallyImplyLeading: false,
+                automaticallyImplyLeading: false, // 기본 뒤로가기
                 titleSpacing: 0.0,
                 title: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 22.w),
+                  padding: EdgeInsets.symmetric(horizontal: 22.w), //좌우 패딩 설정
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -63,7 +65,7 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                           margin: EdgeInsets.only(top: 2.h, bottom: 2.h),
                           child: OutlinedButton(
                             style: OutlinedButton.styleFrom(
-                              backgroundColor: const Color(0xFF4F7BD0),
+                              backgroundColor: accentColor,
                               surfaceTintColor: const Color(0xFF4F7BD0),
                               foregroundColor: mainColor,
                               side: BorderSide.none,
@@ -73,13 +75,13 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                               minimumSize: Size.zero,
                               padding: EdgeInsets.zero,
                             ),
-                            onPressed: () {},
+                            onPressed: () {}, // 누르면 공지스크린 창에 추가되도록 기능 구현하기기
                             child: Text(
                               '작성완료',
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 color: const Color(0xFFFFFFFF),
-                                fontWeight: FontWeight.w400,
+                                fontWeight: FontWeight.w100,
                               ),
                             ),
                           ),
@@ -92,7 +94,7 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
               body: SafeArea(
                 child: Container(
                   margin: EdgeInsets.only(top: 25.h),
-                  padding: EdgeInsets.symmetric(horizontal: 32.w),
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: Stack(
                     children: [
                       Positioned(
@@ -111,12 +113,15 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                               hintText: "제목 입력",
                               border: const UnderlineInputBorder(
                                 borderSide: BorderSide(
-                                  color: Color(0xFF9F9F9F),
+                                  color: Color(0xFFD9D9D9),
+                                  width: 1.0,
                                 ),
                               ),
                               focusedBorder: const UnderlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Color(0xFF4F7BD0)),
+                                borderSide: BorderSide(
+                                  color: Color(0xFFD9D9D9),
+                                  width: 1.0,
+                                ),
                               ),
                               hintStyle: TextStyle(
                                   color: const Color(0xFF9F9F9F),
@@ -138,7 +143,7 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                           child: TextField(
                             expands: true,
                             keyboardType: TextInputType.multiline,
-                            maxLines: null,
+                            maxLines: null, //여러 줄 입력 가능
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: '내용 입력',
@@ -147,104 +152,117 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                                   fontWeight: FontWeight.w300,
                                   fontSize: 13.sp),
                               contentPadding:
-                                  EdgeInsets.only(left: 5.w, top: 10.h),
+                                  EdgeInsets.only(left: 5.w, top: 20.h),
                               isDense: true,
                             ),
                           ),
                         ),
                       ),
                       Positioned(
-                        bottom: (50).h,
+                        bottom: (300).h,
                         left: 0,
                         right: 0,
                         child: Divider(
-                          thickness: 1.h,
+                          thickness: .3.h,
                         ),
                       ),
                       Positioned(
-                        bottom: 0.h,
+                        bottom: 250.h,
                         left: 0,
                         right: 0,
-                        child: Container(
-                          margin: EdgeInsets.only(left: 8.w),
-                          alignment: Alignment.centerLeft,
-                          height: 50.h,
-                          child: Table(
-                            columnWidths: const {
-                              0: IntrinsicColumnWidth(),
-                              1: IntrinsicColumnWidth(),
-                              2: IntrinsicColumnWidth(),
-                            },
-                            children: [
-                              TableRow(
-                                children: [
-                                  TableCell(
-                                    child: Text(
-                                      '시작날짜',
-                                      style: TextStyle(
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w400,
-                                        color: const Color(0xFF727272),
+                        child: InkWell(
+                          onTap: () {
+                            DialogManager.instance.showDateRangePickerDialog(
+                              context: context,
+                              onComplete: (selecteDateRange) {
+                                startDate = selecteDateRange?.start;
+                                endDate = selecteDateRange?.end;
+                              },
+                            );
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(left: 8.w),
+                            alignment: Alignment.centerLeft,
+                            height: 50.h,
+                            child: Table(
+                              columnWidths: const {
+                                0: IntrinsicColumnWidth(),
+                                1: IntrinsicColumnWidth(),
+                                2: IntrinsicColumnWidth(),
+                              },
+                              children: [
+                                TableRow(
+                                  children: [
+                                    TableCell(
+                                      child: Text(
+                                        '시작날짜',
+                                        style: TextStyle(
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w400,
+                                          color: const Color(0xFF727272),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  TableCell(
-                                    child: Text(
-                                      ' | ',
-                                      style: TextStyle(
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w400,
-                                        color: const Color(0xFF727272),
+                                    TableCell(
+                                      child: Text(
+                                        '  |  ',
+                                        style: TextStyle(
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w400,
+                                          color: const Color(0xFFD9D9D9),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  TableCell(
-                                    child: Text(
-                                      startDate,
-                                      style: TextStyle(
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w400,
-                                        color: const Color(0xFF000000),
+                                    TableCell(
+                                      child: Text(
+                                        DateFormat('yy/MM/dd').format(
+                                            (startDate ?? DateTime.now())),
+                                        style: TextStyle(
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w400,
+                                          color: const Color(0xFF727272),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              TableRow(
-                                children: [
-                                  TableCell(
-                                    child: Text(
-                                      '종료날짜',
-                                      style: TextStyle(
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w400,
-                                        color: const Color(0xFF727272),
+                                  ],
+                                ),
+                                TableRow(
+                                  children: [
+                                    TableCell(
+                                      child: Text(
+                                        '종료날짜',
+                                        style: TextStyle(
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w400,
+                                          color: const Color(0xFF727272),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  TableCell(
-                                    child: Text(
-                                      ' | ',
-                                      style: TextStyle(
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w400,
-                                        color: const Color(0xFF727272),
+                                    TableCell(
+                                      child: Text(
+                                        '  |  ',
+                                        style: TextStyle(
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w400,
+                                          color: const Color(0xFFD9D9D9),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  TableCell(
-                                    child: Text(
-                                      endDate,
-                                      style: TextStyle(
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w400,
-                                        color: const Color(0xFF000000),
+                                    TableCell(
+                                      child: Text(
+                                        DateFormat('yy/MM/dd').format(
+                                            (endDate ?? DateTime.now())),
+                                        style: TextStyle(
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w400,
+                                          color: const Color(0xFF727272),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

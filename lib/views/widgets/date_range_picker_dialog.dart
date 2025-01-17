@@ -62,7 +62,7 @@ class _DateRangePickerDialogState extends State<DateRangePickerDialog> {
                       ),
                       child: TextFontWidget.fontRegular(
                         '확인',
-                        color: Color(0xFF0085FF),
+                        color: const Color(0xFF0085FF),
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w800,
                       ),

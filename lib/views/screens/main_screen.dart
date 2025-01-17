@@ -12,6 +12,7 @@ import 'package:support_flutter/viewmodels/user_view_model.dart';
 import 'package:support_flutter/views/screens/community_screen.dart';
 import 'package:support_flutter/views/screens/delivery_screen.dart';
 import 'package:support_flutter/views/screens/laundary_screen.dart';
+import 'package:support_flutter/views/screens/notice_screen.dart';
 import 'package:support_flutter/views/screens/schedule_screen.dart';
 import 'package:badges/badges.dart' as badges;
 
@@ -107,7 +108,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
           ),
           leading: IconButton(
-            icon: Icon(AppBarIcons.ic_menu),
+            icon: const Icon(AppBarIcons.ic_menu),
             onPressed: () => _scaffoldKey.currentState!.openDrawer(),
           ),
           actions: [
@@ -123,16 +124,10 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 ),
                 onPressed: () {
                   // context.go('/notice');
-                  DialogManager.instance.showDateRangePickerDialog(
-                    context: context,
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(
-                      Duration(days: 90),
-                    ),
-                    onComplete: (selecteDateRange) {
-                      logger.d(selecteDateRange);
-                    },
-                  );
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const NoticeScreen()));
                 },
               ),
             )
