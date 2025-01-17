@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/utils/dialog_manager.dart';
+import 'package:support_flutter/utils/logging/logger.dart';
+import 'package:support_flutter/views/screens/notice_screen.dart';
 import 'package:support_flutter/views/widgets/date_range_picker_dialog.dart';
 import 'package:intl/intl.dart';
 
@@ -75,7 +77,13 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                               minimumSize: Size.zero,
                               padding: EdgeInsets.zero,
                             ),
-                            onPressed: () {}, // 누르면 공지스크린 창에 추가되도록 기능 구현하기기
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const NoticeScreen()));
+                            }, // 누르면 공지스크린 창에 추가되도록 기능 구현하기기
                             child: Text(
                               '작성완료',
                               style: TextStyle(
@@ -175,8 +183,11 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                             DialogManager.instance.showDateRangePickerDialog(
                               context: context,
                               onComplete: (selecteDateRange) {
-                                startDate = selecteDateRange?.start;
-                                endDate = selecteDateRange?.end;
+                                logger.d(selecteDateRange);
+                                setState(() {
+                                  startDate = selecteDateRange?.start;
+                                  endDate = selecteDateRange?.end;
+                                });
                               },
                             );
                           },
