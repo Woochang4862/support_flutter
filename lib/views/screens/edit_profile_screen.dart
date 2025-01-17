@@ -300,7 +300,20 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                           width: double.infinity,
                           height: 56.h,
                           child: OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              DialogManager.instance.showAlertDialog(
+                                context: context,
+                                title: '정말 탈퇴하시겠습니까?',
+                                content:
+                                    '탈퇴하기 버튼 선택시 계정 복구가 어려우니\n신중하게 선택해 주시기 바랍니다.',
+                                leftButtonText: '취소',
+                                rightButtonText: '탈퇴',
+                                onRightButtonPressed: () {},
+                                onLeftButtonPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              );
+                            },
                             style: OutlinedButton.styleFrom(
                               backgroundColor: const Color(0xFFA2A2A2),
                               foregroundColor: const Color(0xFFFFFFFF),
