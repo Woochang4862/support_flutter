@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/views/screens/edit_notice_screen.dart';
+import 'package:support_flutter/views/widgets/text_font_widget.dart';
 
 class NoticeScreen extends ConsumerStatefulWidget {
   const NoticeScreen({super.key});
@@ -13,6 +14,8 @@ class NoticeScreen extends ConsumerStatefulWidget {
 }
 
 class _NoticeScreenState extends ConsumerState<NoticeScreen> {
+  final TextEditingController emailController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
@@ -55,15 +58,18 @@ class _NoticeScreenState extends ConsumerState<NoticeScreen> {
           body: Column(
             children: [
               SizedBox(height: 20.h),
-              const SingleChildScrollView(
-                child: Divider(
-                  thickness: 1,
-                  height: 1,
-                  indent: 40,
-                  endIndent: 40,
-                  color: Color.fromARGB(255, 225, 225, 225),
-                ),
-              ),
+              ListView.separated(
+                shrinkWrap: true,
+                itemCount: 10,
+                itemBuilder: (context, index) {
+                  return TextFontWidget.fontRegular('ysdf');
+                },
+                separatorBuilder: (BuildContext context, int index) {
+                  return Divider(
+                    thickness: 1.h,
+                  );
+                },
+              )
             ],
           ),
           floatingActionButton: FloatingActionButton(
