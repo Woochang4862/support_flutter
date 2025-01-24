@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/views/screens/edit_notice_screen.dart';
 import 'package:support_flutter/views/widgets/text_font_widget.dart';
+import 'package:support_flutter/viewmodels/notice_view_model.dart';
 
 class NoticeScreen extends ConsumerStatefulWidget {
   const NoticeScreen({super.key});
@@ -18,6 +19,8 @@ class _NoticeScreenState extends ConsumerState<NoticeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final noticeState = ref.watch(noticeViewModelProvider);
+
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       builder: (context, child) {
@@ -55,22 +58,47 @@ class _NoticeScreenState extends ConsumerState<NoticeScreen> {
               ),
             ),
           ),
-          body: Column(
-            children: [
-              SizedBox(height: 20.h),
-              ListView.separated(
-                shrinkWrap: true,
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return TextFontWidget.fontRegular('ysdf');
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return Divider(
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: noticeState.when(
+              data: (notices) => Column(
+                children: [
+                  Divider(
                     thickness: 1.h,
-                  );
-                },
-              )
-            ],
+                  ),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: notices.length,
+                    itemBuilder: (context, index) {
+                      final notice = notices[index];
+                      return Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 32.w, vertical: 10.h),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextFontWidget.fontRegular(notice.title),
+                            TextFontWidget.fontRegular(notice.creationDate,
+                                color: Color(0xFFAEAEAE)),
+                          ],
+                        ),
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return Divider(
+                        thickness: 1.h,
+                      );
+                    },
+                  ),
+                  Divider(
+                    thickness: 1.h,
+                  ),
+                ],
+              ),
+              loading: () => Center(child: CircularProgressIndicator()),
+              error: (error, stackTrace) =>
+                  Center(child: Text('Error: $error')),
+            ),
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
