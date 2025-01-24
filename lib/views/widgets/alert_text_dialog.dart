@@ -1,11 +1,13 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/views/widgets/text_font_widget.dart';
 
 class AlertTextDialog extends StatefulWidget {
-  const AlertTextDialog({
-    Key? key,
+  AlertTextDialog({
+    super.key,
     this.title,
     this.content,
     this.titleStyle,
@@ -14,12 +16,27 @@ class AlertTextDialog extends StatefulWidget {
     this.onRightButtonPressed,
     this.leftButtonText,
     this.rightButtonText,
-  }) : super(key: key);
+  }) {
+    titleStyle = titleStyle ??
+        TextFontWidget.fontRegularStyle(
+          color: Color(0xFF000000),
+          fontSize: 18.sp,
+          fontWeight: FontWeight.w800,
+          textAlign: TextAlign.center,
+        );
+    contentStyle = contentStyle ??
+        TextFontWidget.fontRegularStyle(
+          color: Color(0xFF767676),
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w400,
+          textAlign: TextAlign.center,
+        );
+  }
 
   final String? title;
   final String? content;
-  final TextStyle? titleStyle;
-  final TextStyle? contentStyle;
+  late TextStyle? titleStyle;
+  late TextStyle? contentStyle;
   final void Function()? onLeftButtonPressed, onRightButtonPressed;
   final String? leftButtonText, rightButtonText;
 
@@ -35,51 +52,42 @@ class _AlertTextDialogState extends State<AlertTextDialog> {
             designSize: const Size(375, 812),
             builder: (context, _) {
               return Container(
+                padding: EdgeInsets.symmetric(
+                  vertical: 15.h,
+                  horizontal: 15.h,
+                ),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.r),
+                  borderRadius: BorderRadius.circular(8.r),
                   color: mainColor,
                 ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 15.h,
-                        horizontal: 15.h,
-                      ),
-                      child: Column(
-                        children: [
-                          ...[
-                            widget.title == null
-                                ? Container()
-                                : Container(
-                                    margin: EdgeInsets.only(bottom: 8.h),
-                                    child: TextFontWidget.fontRegular(
-                                      widget.title!,
-                                      color: Color(0xFF000000),
-                                      fontSize: 18.sp,
-                                      fontWeight: FontWeight.w800,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                          ],
-                          widget.content == null
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ...[
+                          widget.title == null
                               ? Container()
-                              : TextFontWidget.fontRegular(
-                                  widget.content!,
-                                  color: Color(0xFF767676),
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w400,
-                                  textAlign: TextAlign.center,
+                              : Container(
+                                  margin: EdgeInsets.only(bottom: 8.h),
+                                  child: Text(
+                                    widget.title!,
+                                    style: widget.titleStyle,
+                                  ),
                                 ),
                         ],
-                      ),
+                        widget.content == null
+                            ? Container()
+                            : Text(
+                                widget.content!,
+                                style: widget.contentStyle,
+                              ),
+                      ],
                     ),
                     SizedBox.fromSize(
-                      size: Size.fromHeight(0.5.h),
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(color: Color(0xFFCECECE)),
-                      ),
+                      size: Size.fromHeight(15.h),
                     ),
                     if (widget.leftButtonText != null &&
                         widget.rightButtonText != null)
@@ -88,18 +96,16 @@ class _AlertTextDialogState extends State<AlertTextDialog> {
                         child: Row(
                           children: [
                             Expanded(
-                              child: TextButton(
+                              child: OutlinedButton(
                                 onPressed: () {
                                   widget.onLeftButtonPressed?.call();
                                   Navigator.of(context).pop();
                                 },
-                                style: TextButton.styleFrom(
+                                style: OutlinedButton.styleFrom(
                                   minimumSize: Size.fromHeight(56.h),
-                                  //primary: mainColor,
-                                  //onPrimary: Colors.blue,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(15.r)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.r)),
                                   ),
                                 ),
                                 child: TextFontWidget.fontRegular(
@@ -111,26 +117,21 @@ class _AlertTextDialogState extends State<AlertTextDialog> {
                               ),
                             ),
                             SizedBox(
-                              width: 0.5.w,
-                              height: double.infinity,
-                              child: DecoratedBox(
-                                decoration:
-                                    BoxDecoration(color: Color(0xFFCECECE)),
-                              ),
+                              width: 10.w,
                             ),
                             Expanded(
-                              child: TextButton(
+                              child: OutlinedButton(
                                 onPressed: () {
                                   widget.onRightButtonPressed?.call();
                                   Navigator.of(context).pop();
                                 },
-                                style: TextButton.styleFrom(
+                                style: OutlinedButton.styleFrom(
                                   minimumSize: Size.fromHeight(56.h),
                                   //primary: mainColor,
                                   //onPrimary: Colors.blue,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                        bottomRight: Radius.circular(15.r)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.r)),
                                   ),
                                 ),
                                 child: TextFontWidget.fontRegular(
