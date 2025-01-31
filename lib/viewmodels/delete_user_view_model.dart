@@ -1,11 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:support_flutter/models/delete_user_model.dart';
-import 'package:support_flutter/models/user_model.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
 import 'package:support_flutter/viewmodels/user_view_model.dart';
 
 final deleteUserViewModelProvider = StateNotifierProvider.autoDispose<
-    DeleteUserViewModel, AsyncValue<UserModel?>>((ref) {
+    DeleteUserViewModel, AsyncValue<DeleteUserModel?>>((ref) {
   final userViewModel = ref.watch(userViewModelProvider.notifier);
 
   return DeleteUserViewModel(
