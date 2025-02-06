@@ -211,8 +211,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             showSelectedLabels: true,
             showUnselectedLabels: true,
             unselectedIconTheme: const IconThemeData(color: Color(0xFFA7A7A7)),
-            selectedIconTheme: const IconThemeData(color: Color(0xFF4F7BD0)),
-            selectedItemColor: const Color(0xFF4F7BD0),
+            selectedIconTheme: const IconThemeData(color: accentColor),
+            selectedItemColor: accentColor,
             onTap: (value) {
               setState(() {
                 _index = value;

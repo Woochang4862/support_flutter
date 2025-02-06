@@ -70,8 +70,8 @@ final routerProvider = Provider<GoRouter>(
             ),
             // PolicyScreen
             GoRoute(
-              path: 'policy',
-              builder: (_, __) => FindPwScreen(),
+              path: 'privacy_policy',
+              builder: (_, __) => ContactScreen(),
             ),
             GoRoute(
               path: 'schedule_detail',
