@@ -2,7 +2,7 @@ name: support_flutter
 description: "A Dormitory App of the University of Suwon"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -31,7 +31,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -43,7 +42,7 @@ dependencies:
   flutter_svg: ^2.0.10+1
   # 텍스트
   auto_size_text: ^3.0.0
-  
+
   # Link
   url_launcher: ^6.3.1
 
@@ -93,7 +92,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -121,13 +119,13 @@ flutter:
     - family: AppBarIcons
       fonts:
         - asset: assets/fonts/support_app_appbar_icons.ttf
-    - family:  SignUpIcons
+    - family: SignUpIcons
       fonts:
         - asset: assets/fonts/SignUpIcons.ttf
-    - family:  MenuIcons
+    - family: MenuIcons
       fonts:
         - asset: assets/fonts/MenuIcons.ttf
-    - family:  WashingMachineIcon
+    - family: WashingMachineIcon
       fonts:
         - asset: assets/fonts/WashingMachineIcon.ttf
     - family: SUIT
@@ -150,6 +148,9 @@ flutter:
           weight: 800
         - asset: assets/fonts/SUIT-Heavy.ttf
           weight: 900
+    - family: NoticeIcons
+      fonts:
+        - asset: assets/fonts/NoticeIcons.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

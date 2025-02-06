@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:support_flutter/utils/logging/logger.dart';
 
 class DefaultInterceptor extends Interceptor {
-
   DefaultInterceptor();
 
   @override
@@ -18,6 +18,7 @@ class DefaultInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
+    logger.e(err.response?.data);
     return handler.next(err);
   }
 }
