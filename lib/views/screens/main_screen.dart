@@ -44,7 +44,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   ];
   final Map<String, Menu> _logOutMenu = {
     "로그인": (
-      icon: MenuIcons.ic_login,
+      icon: MenuIcons.ic_log_in,
       routeFunc: (context, _) {
         context.go('/login');
       },
@@ -52,7 +52,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   };
   final Map<String, Menu> _logInMenu = {
     "내 정보": (
-      icon: MenuIcons.ic_person,
+      icon: MenuIcons.ic_user,
       routeFunc: (context, _) {
         context.go('/profile');
       },
@@ -63,14 +63,20 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         context.go('/contact');
       },
     ),
-    "개인정보 동의": (
+    "개인 정보 처리 방침": (
+      icon: MenuIcons.ic_shield,
+      routeFunc: (context, _) {
+        context.go('/privacy_policy');
+      },
+    ),
+    "서비스 이용약관": (
       icon: MenuIcons.ic_file,
       routeFunc: (context, _) {
-        context.go('/policy');
+        context.go('/tems_of_serice');
       },
     ),
     "로그아웃": (
-      icon: MenuIcons.ic_logout,
+      icon: MenuIcons.ic_log_out,
       routeFunc: (context, ref) {
         DialogManager.instance.showAlertDialog(
           context: context,
@@ -150,6 +156,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                   color: mainColor,
                   child: InkWell(
                     onTap: () {
+                      _scaffoldKey.currentState?.closeDrawer();
                       _currentMenu.entries
                           .toList()[index]
                           .value
