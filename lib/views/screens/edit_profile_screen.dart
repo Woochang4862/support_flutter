@@ -88,7 +88,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                                 : () async {
                                     final nickname =
                                         nickNameController.text.trim();
-                                    if (selectedDorm != null &&
+                                    if (nickname.isNotEmpty &&
+                                        selectedDorm != null &&
                                         selectedGender != null) {
                                       await ref
                                           .read(
@@ -101,6 +102,17 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                                           .read(
                                               profileViewModelProvider.notifier)
                                           .fetch();
+
+                                      if (context.mounted) {
+                                        await DialogManager.instance
+                                            .showAlertDialog(
+                                                context: context,
+                                                content: '정보를 수정하였습니다.',
+                                                leftButtonText: '확인',
+                                                onLeftButtonPressed: () {
+                                                  Navigator.of(context).pop();
+                                                });
+                                      }
                                     } else {
                                       DialogManager.instance.showAlertDialog(
                                           context: context,
@@ -308,11 +320,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                                 content:
                                     '탈퇴하기 버튼 선택시 계정 복구가 어려우니\n신중하게 선택해 주시기 바랍니다.',
                                 leftButtonText: '취소',
-                                rightButtonText: '탈퇴',
+                                rightButtonText: '탈퇴하기',
                                 onRightButtonPressed: () {},
-                                onLeftButtonPressed: () {
-                                  Navigator.of(context).pop();
-                                },
                               );
                             },
                             style: OutlinedButton.styleFrom(
@@ -340,7 +349,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 }, error: (error, stackTrace) {
                   return TextFontWidget.fontRegular(stackTrace.toString());
                 }, loading: () {
-                  return CircularProgressIndicator();
+                  return Center(child: CircularProgressIndicator());
                 }),
               ),
             ));

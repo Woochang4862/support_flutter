@@ -20,15 +20,15 @@ class AlertTextDialog extends StatefulWidget {
     titleStyle = titleStyle ??
         TextFontWidget.fontRegularStyle(
           color: Color(0xFF000000),
-          fontSize: 18.sp,
-          fontWeight: FontWeight.w800,
+          fontSize: 15.sp,
+          fontWeight: FontWeight.w700,
           textAlign: TextAlign.center,
         );
     contentStyle = contentStyle ??
         TextFontWidget.fontRegularStyle(
-          color: Color(0xFF767676),
-          fontSize: 14.sp,
-          fontWeight: FontWeight.w400,
+          color: Color(0xFF000000),
+          fontSize: 11.sp,
+          fontWeight: FontWeight.w300,
           textAlign: TextAlign.center,
         );
   }
@@ -52,122 +52,121 @@ class _AlertTextDialogState extends State<AlertTextDialog> {
             designSize: const Size(375, 812),
             builder: (context, _) {
               return Container(
-                padding: EdgeInsets.symmetric(
-                  vertical: 15.h,
-                  horizontal: 15.h,
+                padding: EdgeInsets.only(
+                  top: widget.title == null ? 50.h : 32.h,
+                  left: 15.h,
+                  right: 15.h,
+                  bottom: 15.h,
                 ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.r),
                   color: mainColor,
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: widget.title == null
+                      ? CrossAxisAlignment.center
+                      : CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ...[
-                          widget.title == null
-                              ? Container()
-                              : Container(
-                                  margin: EdgeInsets.only(bottom: 8.h),
-                                  child: Text(
-                                    widget.title!,
-                                    style: widget.titleStyle,
-                                  ),
-                                ),
-                        ],
-                        widget.content == null
-                            ? Container()
-                            : Text(
-                                widget.content!,
-                                style: widget.contentStyle,
+                          if (widget.title != null)
+                            Container(
+                              margin: EdgeInsets.only(bottom: 8.h),
+                              child: Text(
+                                widget.title!,
+                                style: widget.titleStyle,
                               ),
+                            ),
+                        ],
+                        if (widget.content != null)
+                          Text(
+                            widget.content!,
+                            style: widget.contentStyle,
+                          ),
                       ],
                     ),
                     SizedBox.fromSize(
-                      size: Size.fromHeight(15.h),
+                      size: Size.fromHeight(widget.title == null ? 50.h : 19.h),
                     ),
-                    if (widget.leftButtonText != null &&
-                        widget.rightButtonText != null)
-                      SizedBox(
-                        height: 56.h,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  widget.onLeftButtonPressed?.call();
-                                  Navigator.of(context).pop();
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  minimumSize: Size.fromHeight(56.h),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8.r)),
+                    SizedBox(
+                      height: 43.h,
+                      child: widget.leftButtonText != null &&
+                              widget.rightButtonText != null
+                          ? Row(
+                              children: [
+                                Expanded(
+                                  child: InkWell(
+                                    onTap: () {
+                                      widget.onLeftButtonPressed?.call();
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFBDBDBD),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8.r)),
+                                      ),
+                                      child: TextFontWidget.fontRegular(
+                                        widget.leftButtonText!,
+                                        color: Colors.white,
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                                   ),
+                                ),
+                                SizedBox(
+                                  width: 10.w,
+                                ),
+                                Expanded(
+                                  child: InkWell(
+                                    onTap: () {
+                                      widget.onRightButtonPressed?.call();
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        color: accentColor,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8.r)),
+                                      ),
+                                      child: TextFontWidget.fontRegular(
+                                        widget.rightButtonText!,
+                                        color: Colors.white,
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : InkWell(
+                              onTap: () {
+                                widget.onLeftButtonPressed?.call();
+                                Navigator.of(context).pop();
+                              },
+                              child: Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: accentColor,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8.r)),
                                 ),
                                 child: TextFontWidget.fontRegular(
                                   widget.leftButtonText!,
-                                  color: Color(0xFF0085FF),
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              width: 10.w,
-                            ),
-                            Expanded(
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  widget.onRightButtonPressed?.call();
-                                  Navigator.of(context).pop();
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  minimumSize: Size.fromHeight(56.h),
-                                  //primary: mainColor,
-                                  //onPrimary: Colors.blue,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8.r)),
-                                  ),
-                                ),
-                                child: TextFontWidget.fontRegular(
-                                  widget.rightButtonText!,
-                                  color: Color(0xFF0085FF),
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    else
-                      TextButton(
-                        onPressed: () {
-                          widget.onLeftButtonPressed?.call();
-                          Navigator.of(context).pop();
-                        },
-                        style: TextButton.styleFrom(
-                          minimumSize: Size.fromHeight(50.h),
-                          //primary: mainColor,
-                          //onPrimary: Colors.blue,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                                top: Radius.zero,
-                                bottom: Radius.circular(15.r)),
-                          ),
-                        ),
-                        child: TextFontWidget.fontRegular(
-                          widget.leftButtonText!,
-                          color: Color(0xFF0085FF),
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
+                    ),
                   ],
                 ),
               );

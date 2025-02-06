@@ -16,7 +16,7 @@ class DialogManager {
   /// * 버튼 하나만 사용할 시 [leftButtonText]만 인자로 넘김
   Future<void> showAlertDialog({
     required BuildContext context,
-    String? title,
+    String? title = "알림",
     String? content,
     TextStyle? titleStyle,
     TextStyle? contentStyle,
@@ -25,12 +25,13 @@ class DialogManager {
     Function()? onLeftButtonPressed,
     Function()? onRightButtonPressed,
     barrierDismissible = true,
+    bool isTitleShow = true,
   }) async {
     await showDialog(
       barrierDismissible: barrierDismissible,
       context: context,
       builder: (_) => AlertTextDialog(
-        title: title ?? "알림",
+        title: isTitleShow ? title : null,
         content: content,
         titleStyle: titleStyle,
         contentStyle: contentStyle,

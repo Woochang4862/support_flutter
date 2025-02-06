@@ -80,12 +80,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                         child: Row(
                           children: <Widget>[
-                            ClipOval(
-                              child: SizedBox.fromSize(
-                                size: Size.fromRadius(41.r), // Image radius
-                                child: Image.network(
-                                    'https://21gram.blog/wp-content/uploads/2023/09/%ED%96%84%EC%8A%A4%ED%84%B0-%EC%A3%BD%EA%B8%B0-%EC%A0%84-%EC%A6%9D%EC%83%81-%ED%96%84%EC%8A%A4%ED%84%B0-%EC%88%98%EB%AA%85-%ED%96%84%EC%8A%A4%ED%84%B0-%EC%9E%A5%EB%A1%80-%ED%96%84%EC%8A%A4%ED%84%B0-%ED%8A%B9%EC%A7%95-%ED%96%84%EC%8A%A4%ED%84%B0-%EA%B2%A8%EC%9A%B8%EC%9E%A0-1024x678.jpg',
-                                    fit: BoxFit.cover),
+                            Container(
+                              width: 82.w,
+                              height: 82.h,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFD9D9D9),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Image(
+                                  image: AssetImage(
+                                      "assets/images/profile_image_sample.png"),
+                                  width: 40.w,
+                                  height: 40.h,
+                                ),
                               ),
                             ),
                             SizedBox(

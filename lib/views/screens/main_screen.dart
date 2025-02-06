@@ -86,6 +86,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           onRightButtonPressed: () {
             ref.read(userViewModelProvider.notifier).logout();
           },
+          isTitleShow: false,
+          contentStyle: TextStyle(
+            fontSize: 15.sp,
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF000000),
+          ),
         );
       },
     ),
