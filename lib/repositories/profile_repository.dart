@@ -49,16 +49,18 @@ class ProfileRepository {
 
   Future<ProfileModel> update({
     required String nickname,
-    required String gender,
-    required String dormType,
+    required GenderType gender,
+    required DormType dormType,
   }) async {
+    final body = {
+      'nickname': nickname,
+      'gender': gender.name,
+      'dormType': dormType.name,
+    };
+
     final response = await dio.put(
       '$baseUrl',
-      data: {
-        'nickname': nickname,
-        'gender': gender,
-        'dormType': dormType,
-      },
+      data: body,
       options: Options(
         headers: {
           'accessToken': true,
@@ -66,10 +68,11 @@ class ProfileRepository {
       ),
     );
 
+    logger.d(body);
+
     logger.d(response.data);
 
-    logger.d(
-        'fetchProfile - ${response.realUri} 로 요청 성공! (${response.statusCode})');
+    logger.d('update - ${response.realUri} 로 요청 성공! (${response.statusCode})');
 
     if (response.statusCode == 200) {
       return ProfileModel.fromJson(response.data)

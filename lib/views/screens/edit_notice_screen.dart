@@ -6,7 +6,6 @@ import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/utils/dialog_manager.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
 import 'package:support_flutter/views/screens/notice_screen.dart';
-import 'package:support_flutter/views/widgets/date_range_picker_dialog.dart';
 import 'package:intl/intl.dart';
 
 class EditNoticeScreen extends ConsumerStatefulWidget {

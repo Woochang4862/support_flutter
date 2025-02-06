@@ -4,8 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:support_flutter/const/data.dart';
+import 'package:support_flutter/models/profile_model.dart';
 import 'package:support_flutter/viewmodels/profile_view_model.dart';
-import 'package:support_flutter/viewmodels/sign_up_view_model.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -156,8 +156,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     ),
                                     TableCell(
                                       child: Text(
-                                        genderSymbolToKoreanMap[
-                                            profile.data!.gender]!,
+                                        GenderType.fromCode(
+                                                profile.data!.gender)
+                                            .korean,
                                         style: TextStyle(
                                           fontSize: 14.sp,
                                           fontWeight: FontWeight.w400,
@@ -191,8 +192,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     ),
                                     TableCell(
                                       child: Text(
-                                        dormTypeSymbolToKoreanMap[
-                                            profile.data!.dormType]!,
+                                        DormType.fromCode(
+                                                profile.data!.dormType)
+                                            .korean,
                                         style: TextStyle(
                                           fontSize: 14.sp,
                                           fontWeight: FontWeight.w400,

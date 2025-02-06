@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:support_flutter/models/profile_model.dart';
 import 'package:support_flutter/repositories/profile_repository.dart';
-import 'package:support_flutter/viewmodels/sign_up_view_model.dart';
 
 final profileViewModelProvider = StateNotifierProvider.autoDispose<
     ProfileViewModel, AsyncValue<ProfileModel?>>((ref) {
@@ -33,15 +32,13 @@ class ProfileViewModel extends StateNotifier<AsyncValue<ProfileModel?>> {
 
   Future<void> update({
     required String nickname,
-    required String gender,
-    required String dormType,
+    required GenderType gender,
+    required DormType dormType,
   }) async {
     try {
       state = AsyncLoading();
       final response = await profileRepository.update(
-          nickname: nickname,
-          gender: genderKoreanToSymbolMap[gender]!,
-          dormType: dormTypeKoreanToSymbolMap[dormType]!);
+          nickname: nickname, gender: gender, dormType: dormType);
       state = AsyncData(response);
     } on ProfileModelError catch (e) {
       state = AsyncError(e, e.stackTrace);

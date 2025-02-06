@@ -1,12 +1,43 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:support_flutter/models/profile_model.dart';
 import 'package:support_flutter/utils/icons/washing_machine_icon_icons.dart';
-import 'package:support_flutter/viewmodels/user_view_model.dart';
+import 'package:support_flutter/utils/logging/logger.dart';
+import 'package:support_flutter/viewmodels/profile_view_model.dart';
 import 'package:support_flutter/views/widgets/text_font_widget.dart';
 
+enum LaundryStatus {
+  inUse('사용중', Color(0xFFFF6363), Color(0x33B0B0B0), Color(0xFFBCBCBC),
+      Color(0xFFAFAFAF)),
+  available('사용가능', Color(0xFF59B7FF), Color(0xFFF1F9FF), Color(0xFF49A0E2),
+      Color(0xFFC9E8FF)),
+  unknown('점검중', Color(0xFFBCBCBC), Color.fromARGB(33, 176, 176, 176),
+      Color.fromARGB(92, 188, 188, 188), Color.fromARGB(120, 175, 175, 175));
+
+  const LaundryStatus(this.message, this.textColor, this.backgroundColor,
+      this.iconColor, this.borderColor);
+  final String message;
+  final Color textColor;
+  final Color backgroundColor;
+  final Color iconColor;
+  final Color borderColor;
+
+  factory LaundryStatus.fromBoolString(String inUse) {
+    switch (inUse) {
+      case '1':
+        return LaundryStatus.inUse;
+      case '0':
+        return LaundryStatus.available;
+      default:
+        return LaundryStatus.unknown;
+    }
+  }
+}
+
 class LaundaryScreen extends ConsumerStatefulWidget {
-  const LaundaryScreen({Key? key}) : super(key: key);
+  const LaundaryScreen({super.key});
 
   @override
   _LaundaryScreenState createState() => _LaundaryScreenState();
@@ -15,14 +46,15 @@ class LaundaryScreen extends ConsumerStatefulWidget {
 class _LaundaryScreenState extends ConsumerState<LaundaryScreen> {
   @override
   Widget build(BuildContext context) {
-    final userState = ref.watch(userViewModelProvider);
+    final profileState = ref.watch(profileViewModelProvider);
 
     return Builder(builder: (context) {
       return ScreenUtilInit(
           designSize: const Size(375, 812),
           builder: (context, child) {
+            final profile = profileState.value?.data;
             return Scaffold(
-              body: userState.value == null
+              body: profile == null
                   ? Center(
                       child: TextFontWidget.fontRegular(
                         '정보를 가져올 수 없습니다.\n[로그인] > [내 정보] > [기숙사 동] 수정',
@@ -32,46 +64,61 @@ class _LaundaryScreenState extends ConsumerState<LaundaryScreen> {
                         color: Colors.black,
                       ),
                     )
-                  : Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 20.w, vertical: 10.h),
-                      child: GridView(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2, mainAxisSpacing: 20.h),
-                        children: [
-                          laundaryItem(1, true),
-                          laundaryItem(2, false),
-                          laundaryItem(3, true),
-                          laundaryItem(4, false),
-                          laundaryItem(5, true),
-                          laundaryItem(6, false),
-                          laundaryItem(7, true),
-                          laundaryItem(8, false),
-                          laundaryItem(9, true),
-                          laundaryItem(10, false),
-                        ],
-                      ),
-                    ),
+                  : _buildLaundaryList(DormType.fromCode(profile.dormType)),
             );
           });
     });
   }
 
-  Widget laundaryItem(int id, bool isAvailable) {
+  Widget _buildLaundaryList(DormType dormType) {
+    FirebaseDatabase database = FirebaseDatabase.instance;
+    return StreamBuilder(
+        stream: database.ref().child(dormType.name).onValue,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            String? stringOfInUse = snapshot.data?.snapshot.value as String?;
+            logger.d(stringOfInUse);
+            List<LaundryStatus> listOfInUse = (stringOfInUse?.split(',') ?? [])
+                .map((e) => LaundryStatus.fromBoolString(e))
+                .toList();
+
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+              child: GridView(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, mainAxisSpacing: 20.h),
+                children: List.generate(
+                  listOfInUse.length,
+                  (index) => laundaryItem(index + 1, listOfInUse[index]),
+                ),
+              ),
+            );
+          } else {
+            return Center(
+              child: TextFontWidget.fontRegular(
+                '정보를 가져올 수 없습니다.',
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w300,
+                color: Colors.black,
+              ),
+            );
+          }
+        });
+  }
+
+  Widget laundaryItem(int id, LaundryStatus laundryStatus) {
     return Column(
       children: [
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(8.r)),
-            color: isAvailable ? Color(0xFFF1F9FF) : Color(0x33B0B0B0),
-            border: Border.all(
-                color: isAvailable ? Color(0xFFC9E8FF) : Color(0xFFAFAFAF),
-                width: 1.w),
+            color: laundryStatus.backgroundColor,
+            border: Border.all(color: laundryStatus.borderColor, width: 1.w),
           ),
           child: Icon(
             WashingMachineIcon.ic_washing_machine,
             size: 140.w,
-            color: isAvailable ? Color(0xFF49A0E2) : Color(0xFFBCBCBC),
+            color: laundryStatus.iconColor,
           ),
         ),
         Flexible(
@@ -96,10 +143,10 @@ class _LaundaryScreenState extends ConsumerState<LaundaryScreen> {
                 width: 2.w,
               ),
               TextFontWidget.fontRegular(
-                isAvailable ? '사용가능' : '사용중',
+                laundryStatus.message,
                 fontSize: 12.sp,
                 fontWeight: FontWeight.w300,
-                color: isAvailable ? Color(0xFF59B7FF) : Color(0xFFFF6363),
+                color: laundryStatus.textColor,
               ),
             ],
           ),

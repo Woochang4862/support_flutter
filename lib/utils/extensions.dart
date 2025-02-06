@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:support_flutter/models/profile_model.dart';
+import 'package:support_flutter/views/widgets/rounded_dropdown.dart';
 
 extension DateTimeRangeExt on DateTimeRange {
   bool contains(DateTime date, {bool closedRange = true}) {
@@ -52,5 +54,17 @@ extension DateTimeExt on DateTime {
     return DateTime(year, month, day)
             .compareTo(DateTime(other.year, other.month, other.day)) >
         0;
+  }
+}
+
+extension GenderTypeExt on List<GenderType> {
+  List<Item> toDropdownItems() {
+    return map((e) => (icon: e.icon, label: e.korean)).toList();
+  }
+}
+
+extension DormTypeExt on List<DormType> {
+  List<Item> toDropdownItems() {
+    return map((e) => (icon: e.icon, label: e.korean)).toList();
   }
 }

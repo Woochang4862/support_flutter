@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/dio/dio.dart';
+import 'package:support_flutter/models/profile_model.dart';
 import 'package:support_flutter/models/sign_up_model.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
 
@@ -85,15 +86,15 @@ class SignUpRepository {
     required String id,
     required String password,
     required String nickname,
-    required String gender,
-    required String dormType,
+    required GenderType gender,
+    required DormType dormType,
   }) async {
     final body = {
       'loginId': id,
       'password': password,
       'nickname': nickname,
-      'gender': gender,
-      'dormType': dormType,
+      'gender': gender.name,
+      'dormType': dormType.name,
     };
     final response = await dio.post(
       '$baseUrl/signup',

@@ -7,7 +7,6 @@ import 'package:support_flutter/utils/dialog_manager.dart';
 import 'package:support_flutter/utils/icons/menu_icons_icons.dart';
 import 'package:support_flutter/utils/icons/support_app_appbar_icons.dart';
 import 'package:support_flutter/utils/icons/support_app_icons.dart';
-import 'package:support_flutter/utils/logging/logger.dart';
 import 'package:support_flutter/viewmodels/user_view_model.dart';
 import 'package:support_flutter/views/screens/community_screen.dart';
 import 'package:support_flutter/views/screens/delivery_screen.dart';
@@ -15,6 +14,7 @@ import 'package:support_flutter/views/screens/laundary_screen.dart';
 import 'package:support_flutter/views/screens/notice_screen.dart';
 import 'package:support_flutter/views/screens/schedule_screen.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:support_flutter/views/widgets/text_font_widget.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
@@ -103,9 +103,10 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         appBar: AppBar(
           centerTitle: true,
           scrolledUnderElevation: 0,
-          title: Text(
+          title: TextFontWidget.fontRegular(
             _titles[_index],
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
+            fontWeight: FontWeight.bold,
+            fontSize: 18.sp,
           ),
           leading: IconButton(
             icon: const Icon(AppBarIcons.ic_menu),
