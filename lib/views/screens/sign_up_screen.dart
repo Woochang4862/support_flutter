@@ -3,10 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:support_flutter/const/data.dart';
+import 'package:support_flutter/models/profile_model.dart';
 import 'package:support_flutter/models/sign_up_model.dart';
 import 'package:support_flutter/utils/dialog_manager.dart';
 import 'package:support_flutter/utils/error_util.dart';
+import 'package:support_flutter/utils/extensions.dart';
 import 'package:support_flutter/utils/icons/sign_up_icons_icons.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
 import 'package:support_flutter/viewmodels/sign_up_view_model.dart';
@@ -15,7 +16,7 @@ import 'package:support_flutter/views/widgets/rounded_text_field.dart';
 import 'package:support_flutter/views/widgets/text_font_widget.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
+  const SignUpScreen({super.key});
 
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
@@ -393,7 +394,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           ),
                           RoundedDropdown(
                             height: 48.h,
-                            items: genders,
+                            items: GenderType.values.toDropdownItems(),
                             onChanged: (String? newValue) {
                               selectedGender = newValue;
                               setState(() {});
@@ -424,7 +425,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             height: 48.h,
                             maxHeight: 130.h,
                             itemIconSize: 13.w,
-                            items: dormTypes,
+                            items: DormType.values.toDropdownItems(),
                             onChanged: (String? newValue) {
                               selectedDorm = newValue;
                               setState(() {});

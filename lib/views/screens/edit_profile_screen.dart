@@ -4,14 +4,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:support_flutter/const/data.dart';
+import 'package:support_flutter/models/profile_model.dart';
 import 'package:support_flutter/utils/dialog_manager.dart';
 import 'package:support_flutter/utils/icons/sign_up_icons_icons.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
 import 'package:support_flutter/viewmodels/profile_view_model.dart';
-import 'package:support_flutter/viewmodels/sign_up_view_model.dart';
 import 'package:support_flutter/views/widgets/rounded_dropdown.dart';
 import 'package:support_flutter/views/widgets/rounded_text_field.dart';
 import 'package:support_flutter/views/widgets/text_font_widget.dart';
+import 'package:support_flutter/utils/extensions.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -24,8 +25,8 @@ class EditProfileScreen extends ConsumerStatefulWidget {
 class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   TextEditingController nickNameController = TextEditingController();
 
-  String? selectedDorm;
-  String? selectedGender;
+  DormType? selectedDorm;
+  GenderType? selectedGender;
 
   @override
   Widget build(BuildContext context) {
@@ -124,8 +125,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               body: SingleChildScrollView(
                 child: profileState.when(data: (data) {
                   nickNameController.text = data!.data!.nickname;
-                  selectedDorm = data.data!.dormType;
-                  selectedGender = data.data!.gender;
+                  selectedDorm = DormType.fromCode(data.data!.dormType);
+                  selectedGender = GenderType.fromCode(data.data!.gender);
                   return Container(
                     margin: EdgeInsets.only(top: 25.h),
                     padding: EdgeInsets.symmetric(horizontal: 32.w),
@@ -241,13 +242,13 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         ),
                         RoundedDropdown(
                           height: 48.h,
-                          items: genders,
+                          items: GenderType.values.toDropdownItems(),
                           onChanged: (String? newValue) {
-                            selectedGender = newValue;
+                            selectedGender = GenderType.fromKorean(newValue!);
                             logger.d(selectedGender);
                           },
                           itemIconSize: 12.w,
-                          initValue: genderSymbolToKoreanMap[selectedGender],
+                          initValue: selectedGender!.korean,
                           hintText: '성별',
                           leftTopCornerRadius: 8.r,
                           rightTopCornerRadius: 8.r,
@@ -271,12 +272,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                           height: 48.h,
                           maxHeight: 130.h,
                           itemIconSize: 13.w,
-                          items: dormTypes,
+                          items: DormType.values.toDropdownItems(),
                           onChanged: (String? newValue) {
-                            selectedDorm = newValue;
+                            selectedDorm = DormType.fromKorean(newValue!);
                             logger.d(selectedDorm);
                           },
-                          initValue: dormTypeSymbolToKoreanMap[selectedDorm],
+                          initValue: selectedDorm!.korean,
                           hintText: '기숙사 동',
                           leftTopCornerRadius: 8.r,
                           rightTopCornerRadius: 8.r,

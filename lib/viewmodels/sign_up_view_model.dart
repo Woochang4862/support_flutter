@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:support_flutter/models/profile_model.dart';
 import 'package:support_flutter/models/sign_up_model.dart';
 import 'package:support_flutter/repositories/sign_up_repository.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
@@ -94,8 +95,8 @@ class SignUpViewModel extends StateNotifier<AsyncValue<SignUpModel?>> {
         id: id,
         password: password,
         nickname: nickname,
-        gender: genderKoreanToSymbolMap[gender]!,
-        dormType: dormTypeKoreanToSymbolMap[dormType]!,
+        gender: GenderType.fromCode(gender),
+        dormType: DormType.fromCode(dormType),
       );
       state = AsyncData(response);
     } on SignUpModelError catch (e) {
@@ -108,33 +109,3 @@ class SignUpViewModel extends StateNotifier<AsyncValue<SignUpModel?>> {
     }
   }
 }
-
-final genderSymbolToKoreanMap = {
-  'MAN': '남성',
-  'WOMAN': '여성',
-};
-
-final genderKoreanToSymbolMap = {
-  '남성': 'MAN',
-  '여성': 'WOMAN',
-};
-
-final dormTypeKoreanToSymbolMap = {
-  '고운학사 A동': 'GounA',
-  '고운학사 B동': 'GounB',
-  '고운학사 C동': 'GounC',
-  '글로벌 경상관 11층': 'Gyung11',
-  '글로벌 경상관 12층': 'Gyung12',
-  '글로벌 경상관 13층': 'Gyung13',
-  '글로벌 경상관 14층': 'Gyung14',
-};
-
-final dormTypeSymbolToKoreanMap = {
-  'GounA': '고운학사 A동',
-  'GounB': '고운학사 B동',
-  'GounC': '고운학사 C동',
-  'Gyung11': '글로벌 경상관 11층',
-  'Gyung12': '글로벌 경상관 12층',
-  'Gyung13': '글로벌 경상관 13층',
-  'Gyung14': '글로벌 경상관 14층',
-};
