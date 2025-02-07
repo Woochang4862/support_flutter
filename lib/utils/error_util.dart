@@ -1,4 +1,12 @@
-enum FieldType { id, password, passwordConfirm, nickname, gender, dormType }
+enum FieldType {
+  password,
+  passwordConfirm,
+  nickname,
+  gender,
+  dormType,
+  email,
+  code,
+}
 
 class ErrorUtil {
   ErrorUtil._();
@@ -58,17 +66,26 @@ class ErrorUtil {
 
   bool isValid(String? code, FieldType fieldType) {
     switch (code) {
-      case "USR-F400": // 학교 이메일
-        return fieldType != FieldType.id;
-      case "USR-F500": // 비밀번호
+      case "USR-F100": // 학교 이메일 공백
+      case "ERR109": // 중복된 이메일
+        return fieldType != FieldType.email;
+      case "USR-F200": // 인증번호 공백
+      case "ERR110": // 인증번호 불일치
+        return fieldType != FieldType.code;
+      case "USR-F300": // 비밀번호 공백
+      case "ERR108": // 비밀번호 공백
         return fieldType != FieldType.password;
-      case "USR-F600": // 비밀번호 확인
+      case "USR-F301": // 비밀번호 확인 일치하지 않음
+      case "ERR112": // 현재 비밀번호 일치하지 않음
         return fieldType != FieldType.passwordConfirm;
-      case "USR-F700": // 닉네임
+      case "USR-F400": // 닉네임 공백
+      case "ERR116": // 닉네임 공백
         return fieldType != FieldType.nickname;
-      case "USR-F800": // 성별
+      case "USR-F500": // 성별 공백
+      case "ERR114": // 성별 공백
         return fieldType != FieldType.gender;
-      case "USR-F900": // 기숙사
+      case "USR-F600": // 기숙사 동 공백
+      case "ERR115": // 기숙사 동 공백
         return fieldType != FieldType.dormType;
       default:
         return true;

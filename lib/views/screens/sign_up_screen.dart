@@ -42,6 +42,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(signUpViewModelProvider);
     ref.listen(signUpViewModelProvider, (previous, next) {
+      logger.d(next);
       next.when(
         data: (data) {
           switch (data!.type) {
@@ -162,7 +163,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w400,
                             ),
-                            borderColor: false ? const Color(0xFFFF3F3F) : null,
+                            borderColor: state.hasError &&
+                                    !ErrorUtil.instance.isValid(
+                                        (state.error as SignUpModelError).code,
+                                        FieldType.email)
+                                ? const Color(0xFFFF3F3F)
+                                : null,
                             isAnimatedHint: false,
                             prefixIcon: SvgPicture.asset(
                               'assets/images/ic_person.svg',
@@ -222,7 +228,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             textInputType: TextInputType.text,
                             textAlign: TextAlign.left,
                             hintText: '인증코드 입력',
-                            borderColor: false ? const Color(0xFFFF3F3F) : null,
+                            borderColor: state.hasError &&
+                                    !ErrorUtil.instance.isValid(
+                                        (state.error as SignUpModelError).code,
+                                        FieldType.code)
+                                ? const Color(0xFFFF3F3F)
+                                : null,
                             isAnimatedHint: false,
                             prefixIcon: SvgPicture.asset(
                               'assets/images/ic_password.svg',
@@ -284,7 +295,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             rightBottomCornerRadius: 0.r,
                             leftTopCornerRadius: 8.r,
                             rightTopCornerRadius: 8.r,
-                            borderColor: false ? const Color(0xFFFF3F3F) : null,
+                            borderColor: state.hasError &&
+                                    !ErrorUtil.instance.isValid(
+                                        (state.error as SignUpModelError).code,
+                                        FieldType.password)
+                                ? const Color(0xFFFF3F3F)
+                                : null,
                             borderWidth: 1.w,
                             maxLines: 1,
                             textInputType: TextInputType.text,
@@ -327,7 +343,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             rightBottomCornerRadius: 8.r,
                             leftTopCornerRadius: 0.r,
                             rightTopCornerRadius: 0.r,
-                            borderColor: false ? const Color(0xFFFF3F3F) : null,
+                            borderColor: state.hasError &&
+                                    !ErrorUtil.instance.isValid(
+                                        (state.error as SignUpModelError).code,
+                                        FieldType.passwordConfirm)
+                                ? const Color(0xFFFF3F3F)
+                                : null,
                             borderWidth: 1.w,
                             maxLines: 1,
                             textInputType: TextInputType.text,
@@ -375,7 +396,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             rightBottomCornerRadius: 0.r,
                             leftTopCornerRadius: 8.r,
                             rightTopCornerRadius: 8.r,
-                            borderColor: false ? const Color(0xFFFF3F3F) : null,
+                            borderColor: state.hasError &&
+                                    !ErrorUtil.instance.isValid(
+                                        (state.error as SignUpModelError).code,
+                                        FieldType.nickname)
+                                ? const Color(0xFFFF3F3F)
+                                : null,
                             borderWidth: 1.w,
                             maxLines: 1,
                             textInputType: TextInputType.text,
@@ -400,6 +426,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               setState(() {});
                               logger.d(selectedGender);
                             },
+                            borderColor: state.hasError &&
+                                    !ErrorUtil.instance.isValid(
+                                        (state.error as SignUpModelError).code,
+                                        FieldType.gender)
+                                ? const Color(0xFFFF3F3F)
+                                : null,
                             itemIconSize: 10.w,
                             initValue: selectedGender,
                             hintText: '성별',
@@ -426,6 +458,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             maxHeight: 130.h,
                             itemIconSize: 13.w,
                             items: DormType.values.toDropdownItems(),
+                            borderColor: state.hasError &&
+                                    !ErrorUtil.instance.isValid(
+                                        (state.error as SignUpModelError).code,
+                                        FieldType.dormType)
+                                ? const Color(0xFFFF3F3F)
+                                : null,
                             onChanged: (String? newValue) {
                               selectedDorm = newValue;
                               setState(() {});
@@ -507,8 +545,22 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                           context: context,
                                           content: '성별을 선택해주세요!',
                                         );
+                                        ref
+                                            .read(signUpViewModelProvider
+                                                .notifier)
+                                            .setError(SignUpModelError(
+                                                statusMessage: '성별을 선택해주세요!',
+                                                code: "USR-F500",
+                                                type: SignUpModelType.signUp));
                                       } else if (selectedDorm == null) {
                                         // 기숙사 동 선택 필요
+                                        ref
+                                            .read(signUpViewModelProvider
+                                                .notifier)
+                                            .setError(SignUpModelError(
+                                                statusMessage: '기숙사 동을 선택해주세요!',
+                                                code: "USR-F600",
+                                                type: SignUpModelType.signUp));
                                         DialogManager.instance.showAlertDialog(
                                           context: context,
                                           content: '기숙사 동을 선택해주세요!',

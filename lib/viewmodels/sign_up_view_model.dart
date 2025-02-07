@@ -91,6 +91,13 @@ class SignUpViewModel extends StateNotifier<AsyncValue<SignUpModel?>> {
           type: SignUpModelType.signUp,
         );
       }
+      if (nickname.isEmpty) {
+        throw SignUpModelError(
+          code: "USR-F400",
+          statusMessage: '닉네임을 입력해주세요!',
+          type: SignUpModelType.signUp,
+        );
+      }
       final response = await signUpRepository.signUp(
         id: id,
         password: password,
@@ -107,5 +114,9 @@ class SignUpViewModel extends StateNotifier<AsyncValue<SignUpModel?>> {
           statusMessage: '예외발생 - $e', type: SignUpModelType.signUp);
       state = AsyncError(error, error.stackTrace);
     }
+  }
+
+  void setError(SignUpModelError signUpModelError) {
+    state = AsyncError(signUpModelError, signUpModelError.stackTrace);
   }
 }
