@@ -6,6 +6,7 @@ import 'package:support_flutter/models/profile_model.dart';
 import 'package:support_flutter/utils/icons/washing_machine_icon_icons.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
 import 'package:support_flutter/viewmodels/profile_view_model.dart';
+import 'package:support_flutter/viewmodels/user_view_model.dart';
 import 'package:support_flutter/views/widgets/text_font_widget.dart';
 
 enum LaundryStatus {
@@ -47,27 +48,65 @@ class _LaundaryScreenState extends ConsumerState<LaundaryScreen> {
   @override
   Widget build(BuildContext context) {
     final profileState = ref.watch(profileViewModelProvider);
+    ref.listen(userViewModelProvider, (previous, next) {
+      final fetch = () async {
+        await ref.read(profileViewModelProvider.notifier).fetch();
+      };
+      next.when(
+          data: (data) {
+            fetch();
+          },
+          error: (error, stackTrace) {
+            fetch();
+          },
+          loading: () {},
+          skipLoadingOnRefresh: true,
+          skipLoadingOnReload: true);
+    });
 
-    return Builder(builder: (context) {
-      return ScreenUtilInit(
+    return Builder(
+      builder: (context) {
+        return ScreenUtilInit(
           designSize: const Size(375, 812),
           builder: (context, child) {
-            final profile = profileState.value?.data;
             return Scaffold(
-              body: profile == null
-                  ? Center(
-                      child: TextFontWidget.fontRegular(
-                        '정보를 가져올 수 없습니다.\n[로그인] > [내 정보] > [기숙사 동] 수정',
-                        textAlign: TextAlign.center,
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w300,
-                        color: Colors.black,
-                      ),
-                    )
-                  : _buildLaundaryList(DormType.fromCode(profile.dormType)),
+              body: profileState.when(
+                data: (data) {
+                  final profile = data?.data;
+                  return profile == null
+                      ? Center(
+                          child: TextFontWidget.fontRegular(
+                            '정보를 가져올 수 없습니다.\n[로그인] > [내 정보] > [기숙사 동] 수정',
+                            textAlign: TextAlign.center,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w300,
+                            color: Colors.black,
+                          ),
+                        )
+                      : _buildLaundaryList(DormType.fromCode(profile.dormType));
+                },
+                error: (Object error, StackTrace stackTrace) {
+                  return Center(
+                    child: TextFontWidget.fontRegular(
+                      '정보를 가져올 수 없습니다.\n[로그인] > [내 정보] > [기숙사 동] 수정',
+                      textAlign: TextAlign.center,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.black,
+                    ),
+                  );
+                },
+                loading: () {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
             );
-          });
-    });
+          },
+        );
+      },
+    );
   }
 
   Widget _buildLaundaryList(DormType dormType) {
