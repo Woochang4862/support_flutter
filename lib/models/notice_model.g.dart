@@ -38,6 +38,7 @@ _$NoticeImpl _$$NoticeImplFromJson(Map<String, dynamic> json) => _$NoticeImpl(
       title: json['title'] as String,
       creationDate: json['creationDate'] as String,
       content: json['content'] as String,
+      isRead: json['isRead'] as bool?,
     );
 
 Map<String, dynamic> _$$NoticeImplToJson(_$NoticeImpl instance) =>
@@ -46,6 +47,7 @@ Map<String, dynamic> _$$NoticeImplToJson(_$NoticeImpl instance) =>
       'title': instance.title,
       'creationDate': instance.creationDate,
       'content': instance.content,
+      'isRead': instance.isRead,
     };
 
 _$NoticeModelErrorImpl _$$NoticeModelErrorImplFromJson(

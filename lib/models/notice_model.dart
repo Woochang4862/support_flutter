@@ -33,18 +33,36 @@ class NoticeModel with _$NoticeModel {
         statusCode: statusCode,
         responseTime: responseTime,
       );
+
+  setData(List<Notice> data) => NoticeModel(
+        statusMessage: statusMessage,
+        data: data,
+        type: type,
+        statusCode: statusCode,
+        responseTime: responseTime,
+      );
 }
 
 @freezed
 class Notice with _$Notice {
+  Notice._();
   factory Notice({
     required int id,
     required String title,
     required String creationDate,
     required String content,
+    bool? isRead,
   }) = _Notice;
 
   factory Notice.fromJson(Map<String, dynamic> json) => _$NoticeFromJson(json);
+
+  Notice setIsRead(bool isRead) => Notice(
+        id: id,
+        title: title,
+        creationDate: creationDate,
+        content: content,
+        isRead: isRead,
+      );
 }
 
 @freezed

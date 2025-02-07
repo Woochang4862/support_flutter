@@ -20,6 +20,7 @@ final port = servers[SERVER]!['port'];
 const accessTokenKey = 'access_token';
 const refreshTokenKey = 'refresh_token';
 const roleKey = 'role';
+const markAsReadKey = 'markAsRead';
 
 const colors = [
   Color(0xFFFF63AF),
