@@ -85,7 +85,13 @@ class _NoticeScreenState extends ConsumerState<NoticeScreen> {
                           final isExpanded = _isExpanded[index];
 
                           return GestureDetector(
-                            onTap: () {
+                            onTap: () async {
+                              if (!(notice.isRead ?? false)) {
+                                // 읽지 않은 공지사항일 경우 읽음 처리
+                                await ref
+                                    .read(noticeViewModelProvider.notifier)
+                                    .markAsRead(notice.id.toString());
+                              }
                               setState(() {
                                 _isExpanded[index] = !isExpanded;
                               });

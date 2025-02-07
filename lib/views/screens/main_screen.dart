@@ -7,6 +7,7 @@ import 'package:support_flutter/utils/dialog_manager.dart';
 import 'package:support_flutter/utils/icons/menu_icons_icons.dart';
 import 'package:support_flutter/utils/icons/support_app_appbar_icons.dart';
 import 'package:support_flutter/utils/icons/support_app_icons.dart';
+import 'package:support_flutter/viewmodels/notice_view_model.dart';
 import 'package:support_flutter/viewmodels/user_view_model.dart';
 import 'package:support_flutter/views/screens/community_screen.dart';
 import 'package:support_flutter/views/screens/delivery_screen.dart';
@@ -108,6 +109,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final userState = ref.watch(userViewModelProvider);
+    final noticeState = ref.watch(noticeViewModelProvider);
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       builder: (context, child) => Scaffold(
@@ -126,6 +128,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           ),
           actions: [
             badges.Badge(
+              showBadge: noticeState.hasValue &&
+                  noticeState.value!
+                      .any((element) => !(element.isRead ?? true)),
               badgeStyle: badges.BadgeStyle(
                 padding: EdgeInsets.all(3.h),
               ),

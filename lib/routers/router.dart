@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:support_flutter/routers/refresh_observer.dart';
 import 'package:support_flutter/views/screens/change_pw_screen.dart';
 import 'package:support_flutter/views/screens/contact_screen.dart';
 import 'package:support_flutter/views/screens/edit_notice_screen.dart';
@@ -95,6 +96,9 @@ final routerProvider = Provider<GoRouter>(
             ),
           ],
         )
+      ],
+      observers: [
+        RefreshObserver(ref: ref),
       ],
       initialLocation: '/',
       debugLogDiagnostics: true,

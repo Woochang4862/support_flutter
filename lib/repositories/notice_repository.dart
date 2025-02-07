@@ -1,26 +1,32 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/dio/dio.dart';
 import 'package:support_flutter/models/notice_model.dart';
+import 'package:support_flutter/secure_storage/secure_storage.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
 
 final noticeRepositoryProvider = Provider<NoticeRepository>((ref) {
   final dio = ref.read(dioProvider);
+  final secureStorage = ref.read(secureStorageProvider);
 
   return NoticeRepository(
     baseUrl: '$protocol://$host:$port/notification',
     dio: dio,
+    secureStorage: secureStorage,
   );
 });
 
 class NoticeRepository {
   final String baseUrl;
   final Dio dio;
+  final FlutterSecureStorage secureStorage;
 
   NoticeRepository({
     required this.baseUrl,
     required this.dio,
+    required this.secureStorage,
   });
 
   Future<NoticeModel> getNotices() async {
@@ -39,5 +45,20 @@ class NoticeRepository {
       throw NoticeModelError.fromJson(response.data)
           .setType(NoticeModelType.fetch);
     }
+  }
+
+  Future<void> markAsRead(String id) async {
+    final markAsRead = await secureStorage.read(key: markAsReadKey) ?? "";
+    final markAsReadList = markAsRead.split(',');
+    if (markAsReadList.contains(id)) {
+      return;
+    }
+    await secureStorage.write(key: markAsReadKey, value: '$markAsRead,$id');
+  }
+
+  Future<List<String>> getMarkAsRead() async {
+    final markAsRead = await secureStorage.read(key: markAsReadKey);
+    final markAsReadList = markAsRead?.split(',') ?? [];
+    return markAsReadList;
   }
 }

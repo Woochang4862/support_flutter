@@ -270,6 +270,7 @@ mixin _$Notice {
   String get title => throw _privateConstructorUsedError;
   String get creationDate => throw _privateConstructorUsedError;
   String get content => throw _privateConstructorUsedError;
+  bool? get isRead => throw _privateConstructorUsedError;
 
   /// Serializes this Notice to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -285,7 +286,12 @@ abstract class $NoticeCopyWith<$Res> {
   factory $NoticeCopyWith(Notice value, $Res Function(Notice) then) =
       _$NoticeCopyWithImpl<$Res, Notice>;
   @useResult
-  $Res call({int id, String title, String creationDate, String content});
+  $Res call(
+      {int id,
+      String title,
+      String creationDate,
+      String content,
+      bool? isRead});
 }
 
 /// @nodoc
@@ -307,6 +313,7 @@ class _$NoticeCopyWithImpl<$Res, $Val extends Notice>
     Object? title = null,
     Object? creationDate = null,
     Object? content = null,
+    Object? isRead = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -325,6 +332,10 @@ class _$NoticeCopyWithImpl<$Res, $Val extends Notice>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
+      isRead: freezed == isRead
+          ? _value.isRead
+          : isRead // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ) as $Val);
   }
 }
@@ -336,7 +347,12 @@ abstract class _$$NoticeImplCopyWith<$Res> implements $NoticeCopyWith<$Res> {
       __$$NoticeImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String title, String creationDate, String content});
+  $Res call(
+      {int id,
+      String title,
+      String creationDate,
+      String content,
+      bool? isRead});
 }
 
 /// @nodoc
@@ -356,6 +372,7 @@ class __$$NoticeImplCopyWithImpl<$Res>
     Object? title = null,
     Object? creationDate = null,
     Object? content = null,
+    Object? isRead = freezed,
   }) {
     return _then(_$NoticeImpl(
       id: null == id
@@ -374,18 +391,24 @@ class __$$NoticeImplCopyWithImpl<$Res>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
+      isRead: freezed == isRead
+          ? _value.isRead
+          : isRead // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$NoticeImpl implements _Notice {
+class _$NoticeImpl extends _Notice {
   _$NoticeImpl(
       {required this.id,
       required this.title,
       required this.creationDate,
-      required this.content});
+      required this.content,
+      this.isRead})
+      : super._();
 
   factory _$NoticeImpl.fromJson(Map<String, dynamic> json) =>
       _$$NoticeImplFromJson(json);
@@ -398,10 +421,12 @@ class _$NoticeImpl implements _Notice {
   final String creationDate;
   @override
   final String content;
+  @override
+  final bool? isRead;
 
   @override
   String toString() {
-    return 'Notice(id: $id, title: $title, creationDate: $creationDate, content: $content)';
+    return 'Notice(id: $id, title: $title, creationDate: $creationDate, content: $content, isRead: $isRead)';
   }
 
   @override
@@ -413,13 +438,14 @@ class _$NoticeImpl implements _Notice {
             (identical(other.title, title) || other.title == title) &&
             (identical(other.creationDate, creationDate) ||
                 other.creationDate == creationDate) &&
-            (identical(other.content, content) || other.content == content));
+            (identical(other.content, content) || other.content == content) &&
+            (identical(other.isRead, isRead) || other.isRead == isRead));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, id, title, creationDate, content);
+      Object.hash(runtimeType, id, title, creationDate, content, isRead);
 
   /// Create a copy of Notice
   /// with the given fields replaced by the non-null parameter values.
@@ -437,12 +463,14 @@ class _$NoticeImpl implements _Notice {
   }
 }
 
-abstract class _Notice implements Notice {
+abstract class _Notice extends Notice {
   factory _Notice(
       {required final int id,
       required final String title,
       required final String creationDate,
-      required final String content}) = _$NoticeImpl;
+      required final String content,
+      final bool? isRead}) = _$NoticeImpl;
+  _Notice._() : super._();
 
   factory _Notice.fromJson(Map<String, dynamic> json) = _$NoticeImpl.fromJson;
 
@@ -454,6 +482,8 @@ abstract class _Notice implements Notice {
   String get creationDate;
   @override
   String get content;
+  @override
+  bool? get isRead;
 
   /// Create a copy of Notice
   /// with the given fields replaced by the non-null parameter values.
