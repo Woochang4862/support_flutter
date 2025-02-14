@@ -7,12 +7,12 @@ import 'package:support_flutter/utils/dialog_manager.dart';
 import 'package:support_flutter/utils/icons/menu_icons_icons.dart';
 import 'package:support_flutter/utils/icons/support_app_appbar_icons.dart';
 import 'package:support_flutter/utils/icons/support_app_icons.dart';
+import 'package:support_flutter/utils/logging/logger.dart';
 import 'package:support_flutter/viewmodels/notice_view_model.dart';
 import 'package:support_flutter/viewmodels/user_view_model.dart';
 import 'package:support_flutter/views/screens/community_screen.dart';
 import 'package:support_flutter/views/screens/delivery_screen.dart';
 import 'package:support_flutter/views/screens/laundary_screen.dart';
-import 'package:support_flutter/views/screens/notice_screen.dart';
 import 'package:support_flutter/views/screens/schedule_screen.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:support_flutter/views/widgets/text_font_widget.dart';
@@ -91,7 +91,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           contentStyle: TextStyle(
             fontSize: 15.sp,
             fontWeight: FontWeight.w500,
-            color: Color(0xFF000000),
+            color: const Color(0xFF000000),
           ),
         );
       },
@@ -110,6 +110,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   Widget build(BuildContext context) {
     final userState = ref.watch(userViewModelProvider);
     final noticeState = ref.watch(noticeViewModelProvider);
+    ref.listen(userViewModelProvider, (prev, next) {
+      logger.d(next);
+    });
+    ref.listen(noticeViewModelProvider, (prev, next) {
+      logger.d(next);
+    });
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       builder: (context, child) => Scaffold(
@@ -129,7 +135,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           actions: [
             badges.Badge(
               showBadge: noticeState.hasValue &&
-                  noticeState.value!
+                  noticeState.value!.data != null &&
+                  noticeState.value!.data!
                       .any((element) => !(element.isRead ?? true)),
               badgeStyle: badges.BadgeStyle(
                 padding: EdgeInsets.all(3.h),
@@ -141,11 +148,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                   size: 22.w,
                 ),
                 onPressed: () {
-                  // context.go('/notice');
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const NoticeScreen()));
+                  context.go('/notice');
                 },
               ),
             )

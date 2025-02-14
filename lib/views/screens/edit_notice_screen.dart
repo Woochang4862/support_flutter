@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:support_flutter/const/data.dart';
+import 'package:support_flutter/models/notice_model.dart';
 import 'package:support_flutter/utils/dialog_manager.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
-import 'package:support_flutter/views/screens/notice_screen.dart';
+import 'package:support_flutter/viewmodels/notice_view_model.dart';
 import 'package:intl/intl.dart';
 
 class EditNoticeScreen extends ConsumerStatefulWidget {
@@ -27,6 +29,25 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
   Widget build(BuildContext context) {
     contentController.addListener(() {});
     titleController.addListener(() {});
+
+    ref.listen(noticeViewModelProvider, (prev, next) {
+      logger.d(next);
+      next.when(
+          data: (data) async {
+            switch (data.type) {
+              case NoticeModelType.fetch:
+                // 화면 닫기
+                context.pop();
+                break;
+              case NoticeModelType.create:
+                ref.read(noticeViewModelProvider.notifier).fetchNotices();
+                break;
+              default:
+            }
+          },
+          error: (error, stackTrace) {},
+          loading: () {});
+    });
 
     return ScreenUtilInit(
         designSize: const Size(375, 812), // 디자인 기준 사이즈 설정
@@ -76,12 +97,16 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                               minimumSize: Size.zero,
                               padding: EdgeInsets.zero,
                             ),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const NoticeScreen()));
+                            onPressed: () async {
+                              final title = titleController.text.trim();
+                              final content = contentController.text;
+                              if (title.isNotEmpty && content.isNotEmpty) {
+                                // 서버로 요청
+                                await ref
+                                    .read(noticeViewModelProvider.notifier)
+                                    .createNotice(
+                                        title: title, content: content);
+                              }
                             }, // 누르면 공지스크린 창에 추가되도록 기능 구현하기기
                             child: Text(
                               '작성완료',
@@ -151,6 +176,7 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                             expands: true,
                             keyboardType: TextInputType.multiline,
                             maxLines: null, //여러 줄 입력 가능
+                            controller: contentController,
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: '내용 입력',

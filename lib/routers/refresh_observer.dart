@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
-import 'package:support_flutter/viewmodels/notice_view_model.dart';
 
 class RefreshObserver extends NavigatorObserver {
   RefreshObserver({required this.ref});
@@ -12,7 +11,7 @@ class RefreshObserver extends NavigatorObserver {
   void didPop(Route route, Route? previousRoute) async {
     if (previousRoute?.settings.name == '/') {
       logger.d('didPop - called!');
-      await ref.read(noticeViewModelProvider.notifier).fetchNotices();
+      //await ref.read(noticeViewModelProvider.notifier).fetchNotices();
     }
     super.didPop(route, previousRoute);
   }

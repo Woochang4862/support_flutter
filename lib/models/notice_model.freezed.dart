@@ -24,7 +24,7 @@ mixin _$NoticeModel {
   int? get statusCode => throw _privateConstructorUsedError;
   String? get statusMessage => throw _privateConstructorUsedError;
   String? get responseTime => throw _privateConstructorUsedError;
-  List<Notice> get data => throw _privateConstructorUsedError;
+  List<Notice>? get data => throw _privateConstructorUsedError;
 
   /// Serializes this NoticeModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -47,7 +47,7 @@ abstract class $NoticeModelCopyWith<$Res> {
       int? statusCode,
       String? statusMessage,
       String? responseTime,
-      List<Notice> data});
+      List<Notice>? data});
 }
 
 /// @nodoc
@@ -69,7 +69,7 @@ class _$NoticeModelCopyWithImpl<$Res, $Val extends NoticeModel>
     Object? statusCode = freezed,
     Object? statusMessage = freezed,
     Object? responseTime = freezed,
-    Object? data = null,
+    Object? data = freezed,
   }) {
     return _then(_value.copyWith(
       type: freezed == type
@@ -88,10 +88,10 @@ class _$NoticeModelCopyWithImpl<$Res, $Val extends NoticeModel>
           ? _value.responseTime
           : responseTime // ignore: cast_nullable_to_non_nullable
               as String?,
-      data: null == data
+      data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
-              as List<Notice>,
+              as List<Notice>?,
     ) as $Val);
   }
 }
@@ -109,7 +109,7 @@ abstract class _$$NoticeModelImplCopyWith<$Res>
       int? statusCode,
       String? statusMessage,
       String? responseTime,
-      List<Notice> data});
+      List<Notice>? data});
 }
 
 /// @nodoc
@@ -129,7 +129,7 @@ class __$$NoticeModelImplCopyWithImpl<$Res>
     Object? statusCode = freezed,
     Object? statusMessage = freezed,
     Object? responseTime = freezed,
-    Object? data = null,
+    Object? data = freezed,
   }) {
     return _then(_$NoticeModelImpl(
       type: freezed == type
@@ -148,10 +148,10 @@ class __$$NoticeModelImplCopyWithImpl<$Res>
           ? _value.responseTime
           : responseTime // ignore: cast_nullable_to_non_nullable
               as String?,
-      data: null == data
+      data: freezed == data
           ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
-              as List<Notice>,
+              as List<Notice>?,
     ));
   }
 }
@@ -165,7 +165,7 @@ class _$NoticeModelImpl extends _NoticeModel {
       this.statusCode,
       this.statusMessage,
       this.responseTime,
-      required final List<Notice> data})
+      final List<Notice>? data})
       : _data = data,
         super._();
 
@@ -180,12 +180,14 @@ class _$NoticeModelImpl extends _NoticeModel {
   final String? statusMessage;
   @override
   final String? responseTime;
-  final List<Notice> _data;
+  final List<Notice>? _data;
   @override
-  List<Notice> get data {
+  List<Notice>? get data {
+    final value = _data;
+    if (value == null) return null;
     if (_data is EqualUnmodifiableListView) return _data;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_data);
+    return EqualUnmodifiableListView(value);
   }
 
   @override
@@ -235,7 +237,7 @@ abstract class _NoticeModel extends NoticeModel {
       final int? statusCode,
       final String? statusMessage,
       final String? responseTime,
-      required final List<Notice> data}) = _$NoticeModelImpl;
+      final List<Notice>? data}) = _$NoticeModelImpl;
   _NoticeModel._() : super._();
 
   factory _NoticeModel.fromJson(Map<String, dynamic> json) =
@@ -250,7 +252,7 @@ abstract class _NoticeModel extends NoticeModel {
   @override
   String? get responseTime;
   @override
-  List<Notice> get data;
+  List<Notice>? get data;
 
   /// Create a copy of NoticeModel
   /// with the given fields replaced by the non-null parameter values.

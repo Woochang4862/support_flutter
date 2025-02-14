@@ -17,7 +17,7 @@ class NoticeModel with _$NoticeModel {
     int? statusCode,
     String? statusMessage,
     String? responseTime,
-    required List<Notice> data,
+    List<Notice>? data,
   }) = _NoticeModel;
 
   factory NoticeModel.fromJson(Map<String, dynamic> json) =>
@@ -34,7 +34,7 @@ class NoticeModel with _$NoticeModel {
         responseTime: responseTime,
       );
 
-  setData(List<Notice> data) => NoticeModel(
+  NoticeModel setData(List<Notice>? data) => NoticeModel(
         statusMessage: statusMessage,
         data: data,
         type: type,
