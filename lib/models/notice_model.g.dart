@@ -12,8 +12,8 @@ _$NoticeModelImpl _$$NoticeModelImplFromJson(Map<String, dynamic> json) =>
       statusCode: (json['statusCode'] as num?)?.toInt(),
       statusMessage: json['statusMessage'] as String?,
       responseTime: json['responseTime'] as String?,
-      data: (json['data'] as List<dynamic>)
-          .map((e) => Notice.fromJson(e as Map<String, dynamic>))
+      data: (json['data'] as List<dynamic>?)
+          ?.map((e) => Notice.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
@@ -23,7 +23,7 @@ Map<String, dynamic> _$$NoticeModelImplToJson(_$NoticeModelImpl instance) =>
       'statusCode': instance.statusCode,
       'statusMessage': instance.statusMessage,
       'responseTime': instance.responseTime,
-      'data': instance.data.map((e) => e.toJson()).toList(),
+      'data': instance.data?.map((e) => e.toJson()).toList(),
     };
 
 const _$NoticeModelTypeEnumMap = {

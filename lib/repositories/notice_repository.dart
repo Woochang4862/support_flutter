@@ -61,4 +61,33 @@ class NoticeRepository {
     final markAsReadList = markAsRead?.split(',') ?? [];
     return markAsReadList;
   }
+
+  Future<NoticeModel> createNotice({
+    required String title,
+    required String content,
+  }) async {
+    final body = {
+      "title": title,
+      "content": content,
+    };
+    final response = await dio.post(
+      '$baseUrl/add',
+      data: body,
+      options: Options(headers: {
+        'accessToken': true,
+      }),
+    );
+
+    logger.d(response.data);
+
+    logger.d(
+        'createNotice - ${response.realUri} 로 요청 성공! (${response.statusCode})');
+
+    if (response.statusCode == 200) {
+      return NoticeModel.fromJson(response.data).setType(NoticeModelType.create);
+    } else { // 4xx
+      throw NoticeModelError.fromJson(response.data)
+          .setType(NoticeModelType.fetch);
+    }
+  }
 }
