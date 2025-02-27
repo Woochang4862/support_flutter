@@ -29,6 +29,7 @@ class NoticeRepository {
     required this.secureStorage,
   });
 
+  // 공지사항 조회
   Future<NoticeModel> getNotices() async {
     final response = await dio.get(
       '$baseUrl',
@@ -62,6 +63,7 @@ class NoticeRepository {
     return markAsReadList;
   }
 
+  // 공지사항 작성
   Future<NoticeModel> createNotice({
     required String title,
     required String content,
@@ -84,10 +86,73 @@ class NoticeRepository {
         'createNotice - ${response.realUri} 로 요청 성공! (${response.statusCode})');
 
     if (response.statusCode == 200) {
-      return NoticeModel.fromJson(response.data).setType(NoticeModelType.create);
-    } else { // 4xx
+      return NoticeModel.fromJson(response.data)
+          .setType(NoticeModelType.create);
+    } else {
+      // 4xx
       throw NoticeModelError.fromJson(response.data)
           .setType(NoticeModelType.fetch);
+    }
+  }
+
+  // 공지사항 수정
+  Future<NoticeModel> updateNotice({
+    required int noticeId,
+    required String title,
+    required String content,
+  }) async {
+    final body = {
+      "title": title,
+      "content": content,
+    };
+    final response = await dio.put(
+      '$baseUrl/${noticeId}',
+      data: body,
+      options: Options(headers: {
+        'accessToken': true,
+      }),
+    );
+
+    logger.d(response.data);
+
+    logger.d(
+        'updateNotice - ${response.realUri} 로 요청 성공! (${response.statusCode})');
+
+    if (response.statusCode == 200) {
+      return NoticeModel.fromJson(response.data)
+          .setType(NoticeModelType.update);
+    } else {
+      // Bad Request
+      throw NoticeModelError.fromJson(response.data)
+          .setType(NoticeModelType.update);
+    }
+  }
+
+  // 공지사항 삭제
+  Future<NoticeModel> deleteNotice({
+    required int noticeId,
+  }) async {
+    final response = await dio.delete(
+      '$baseUrl/${noticeId}',
+      options: Options(
+        headers: {
+          'accessToken': true,
+        },
+      ),
+    );
+
+    logger.d(response.data);
+
+    logger.d(
+        'deleteNotice - ${response.realUri} 로 요청 성공! (${response.statusCode})');
+
+    if (response.statusCode == 200) {
+      return NoticeModel.fromJson(response.data)
+          .setType(NoticeModelType.delete);
+    } else {
+      // Bad Request
+      throw NoticeModelError.fromJson(response.data)
+          .setType(NoticeModelType.delete);
     }
   }
 }

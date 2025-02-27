@@ -10,7 +10,6 @@ import 'package:support_flutter/viewmodels/user_view_model.dart';
 import 'package:support_flutter/views/screens/edit_notice_screen.dart';
 import 'package:support_flutter/views/widgets/text_font_widget.dart';
 import 'package:support_flutter/viewmodels/notice_view_model.dart';
-import 'package:support_flutter/viewmodels/delete_notice_view_model.dart'; // 추가
 
 class NoticeScreen extends ConsumerStatefulWidget {
   const NoticeScreen({super.key});
@@ -27,7 +26,7 @@ class _NoticeScreenState extends ConsumerState<NoticeScreen> {
     final userState = ref.watch(userViewModelProvider);
     final noticeState = ref.watch(noticeViewModelProvider);
     final deleteNoticeViewModel =
-        ref.watch(deleteNoticeViewModelProvider.notifier); // 추가
+        ref.watch(noticeViewModelProvider.notifier); // 추가
 
     ref.listen(noticeViewModelProvider, (prev, next) {
       next.when(
@@ -255,7 +254,10 @@ class _NoticeScreenState extends ConsumerState<NoticeScreen> {
                                                                     MaterialPageRoute(
                                                                       builder:
                                                                           (context) =>
-                                                                              const EditNoticeScreen(),
+                                                                              EditNoticeScreen(
+                                                                        noticeId:
+                                                                            notice.id,
+                                                                      ),
                                                                     ),
                                                                   );
                                                                 } else if (value ==
@@ -389,7 +391,9 @@ class _NoticeScreenState extends ConsumerState<NoticeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const EditNoticeScreen(),
+                        builder: (context) => EditNoticeScreen(
+                          noticeId: 0,
+                        ),
                       ),
                     );
                   },

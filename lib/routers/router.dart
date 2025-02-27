@@ -75,8 +75,12 @@ final routerProvider = Provider<GoRouter>(
               builder: (_, __) => ContactScreen(),
             ),
             GoRoute(
-              path: 'schedule_detail',
-              builder: (_, __) => ScheduleDetailScreen(),
+              path: 'schedule_detail/:id',
+              builder: (context, state) {
+                final id = int.tryParse(state.pathParameters['id'] ?? '') ??
+                    0; // 전달된 ID 가져오기
+                return ScheduleDetailScreen(scheduleId: id);
+              },
             ),
             GoRoute(
               path: 'notice',

@@ -75,7 +75,9 @@ class _NoticeDetailScreenState extends ConsumerState<NoticeDetailScreen> {
                         SizedBox(
                           height: 6.h,
                         ),
-                        Divider(thickness: 1.h,),
+                        Divider(
+                          thickness: 1.h,
+                        ),
                         SizedBox(
                           height: 6.h,
                         ),
@@ -90,7 +92,6 @@ class _NoticeDetailScreenState extends ConsumerState<NoticeDetailScreen> {
                         SizedBox(
                           height: 8.h,
                         ),
-                        
                         SizedBox(
                           height: 8.h,
                         ),
@@ -117,8 +118,7 @@ class _NoticeDetailScreenState extends ConsumerState<NoticeDetailScreen> {
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: () {
-                            context.push('/image',
-                                extra: []);
+                            context.push('/image', extra: []);
                           },
                           child: Container(
                             margin: EdgeInsets.symmetric(

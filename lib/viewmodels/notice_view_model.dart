@@ -19,6 +19,7 @@ class NoticeViewModel extends StateNotifier<AsyncValue<NoticeModel>> {
     fetchNotices();
   }
 
+// 공지사항 조회
   Future<void> fetchNotices() async {
     try {
       state = const AsyncLoading();
@@ -59,6 +60,7 @@ class NoticeViewModel extends StateNotifier<AsyncValue<NoticeModel>> {
     return notices;
   }
 
+// 공지사항 작성
   Future<void> createNotice({
     required String title,
     required String content,
@@ -69,6 +71,43 @@ class NoticeViewModel extends StateNotifier<AsyncValue<NoticeModel>> {
       var response =
           await noticeRepository.createNotice(title: title, content: content);
 
+      state = AsyncData(response);
+    } on NoticeModelError catch (e) {
+      state = AsyncError(e, e.stackTrace);
+    } catch (e) {
+      final error = NoticeModelError(
+          statusMessage: '예외발생 : $e', type: NoticeModelType.fetch);
+      state = AsyncError(error, error.stackTrace);
+    }
+  }
+
+  // 공지사항 수정
+  Future<void> updateNotice({
+    required int noticeId,
+    required String title,
+    required String content,
+  }) async {
+    try {
+      state = const AsyncLoading();
+      final response = await noticeRepository.updateNotice(
+          noticeId: noticeId, title: title, content: content);
+      state = AsyncData(response);
+    } on NoticeModelError catch (e) {
+      state = AsyncError(e, e.stackTrace);
+    } catch (e) {
+      final error = NoticeModelError(
+          statusMessage: '예외발생 : $e', type: NoticeModelType.fetch);
+      state = AsyncError(error, error.stackTrace);
+    }
+  }
+
+// 공지사항 삭제
+  Future<void> deleteNotice({
+    required int noticeId,
+  }) async {
+    try {
+      state = const AsyncLoading();
+      final response = await noticeRepository.deleteNotice(noticeId: noticeId);
       state = AsyncData(response);
     } on NoticeModelError catch (e) {
       state = AsyncError(e, e.stackTrace);
