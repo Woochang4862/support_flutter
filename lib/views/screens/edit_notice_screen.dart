@@ -11,7 +11,7 @@ import 'package:support_flutter/viewmodels/notice_view_model.dart';
 import 'package:intl/intl.dart';
 
 class EditNoticeScreen extends ConsumerStatefulWidget {
-  const EditNoticeScreen({super.key});
+  const EditNoticeScreen({super.key, required int noticeId});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>

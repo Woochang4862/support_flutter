@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/models/notice_model.dart';
+import 'package:support_flutter/utils/dialog_manager.dart';
 import 'package:support_flutter/utils/icons/notice_icons_icons.dart';
 import 'package:support_flutter/viewmodels/user_view_model.dart';
 import 'package:support_flutter/views/screens/edit_notice_screen.dart';
@@ -262,49 +263,46 @@ class _NoticeScreenState extends ConsumerState<NoticeScreen> {
                                                                   );
                                                                 } else if (value ==
                                                                     'delete') {
-                                                                  // 삭제 액션
-                                                                  showDialog(
+                                                                  DialogManager
+                                                                      .instance
+                                                                      .showAlertDialog(
                                                                     context:
                                                                         context,
-                                                                    builder:
-                                                                        (context) =>
-                                                                            AlertDialog(
-                                                                      title: const Text(
-                                                                          '삭제'),
-                                                                      content:
-                                                                          const Text(
-                                                                              '정말 삭제하시겠습니까?'),
-                                                                      actions: [
-                                                                        TextButton(
-                                                                          onPressed: () =>
-                                                                              Navigator.pop(context),
-                                                                          child:
-                                                                              const Text('취소'),
-                                                                        ),
-                                                                        TextButton(
-                                                                          onPressed:
-                                                                              () async {
-                                                                            // 삭제 로직 추가
-                                                                            try {
-                                                                              await deleteNoticeViewModel.deleteNotice(noticeId: notice.id);
-                                                                              // 상태 업데이트
-                                                                              ref.refresh(noticeViewModelProvider);
-                                                                              Navigator.pop(context);
-                                                                            } catch (e) {
-                                                                              // 에러 처리
-                                                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                                                SnackBar(content: Text('삭제 실패: $e')),
-                                                                              );
-                                                                            }
-                                                                          },
-                                                                          child:
-                                                                              const Text(
-                                                                            '확인',
-                                                                            style:
-                                                                                TextStyle(color: Colors.red),
-                                                                          ),
-                                                                        ),
-                                                                      ],
+                                                                    content:
+                                                                        '정말 삭제하시겠습니까?',
+                                                                    leftButtonText:
+                                                                        '취소',
+                                                                    rightButtonText:
+                                                                        '삭제',
+                                                                    onRightButtonPressed:
+                                                                        () async {
+                                                                      try {
+                                                                        await deleteNoticeViewModel.deleteNotice(
+                                                                            noticeId:
+                                                                                notice.id);
+                                                                        ref.refresh(
+                                                                            noticeViewModelProvider);
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      } catch (e) {
+                                                                        ScaffoldMessenger.of(context)
+                                                                            .showSnackBar(
+                                                                          SnackBar(
+                                                                              content: Text('삭제 실패: $e')),
+                                                                        );
+                                                                      }
+                                                                    },
+                                                                    isTitleShow:
+                                                                        false,
+                                                                    contentStyle:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          15.sp,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                      color: const Color(
+                                                                          0xFF000000),
                                                                     ),
                                                                   );
                                                                 }

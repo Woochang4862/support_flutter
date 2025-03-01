@@ -96,7 +96,9 @@ final routerProvider = Provider<GoRouter>(
             // EditNoticeScreen
             GoRoute(
               path: 'edit_notice',
-              builder: (context, state) => EditNoticeScreen(),
+              builder: (context, state) => EditNoticeScreen(
+                noticeId: 0,
+              ),
             ),
           ],
         )
