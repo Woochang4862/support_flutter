@@ -85,7 +85,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                                     return NoticeItem(
                                         title: schedules[index].title,
                                         onItemClick: () {
-                                          context.go('/schedule_detail');
+                                          context.go(
+                                              '/schedule_detail/${schedules[index].id}');
                                         });
                                   },
                                   separatorBuilder:
