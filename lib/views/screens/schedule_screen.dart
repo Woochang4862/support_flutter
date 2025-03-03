@@ -38,7 +38,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                       userState.value!.data.role == "ROLE_MEMBER"
                   ? null
                   : FloatingActionButton(
-                      onPressed: () => context.go('/edit_notice'),
+                      onPressed: () => context.go('/edit_schedule'),
                       backgroundColor: mainColor,
                       shape: const CircleBorder(),
                       child: const Icon(

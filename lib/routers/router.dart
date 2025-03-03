@@ -94,6 +94,10 @@ final routerProvider = Provider<GoRouter>(
               path: 'edit_notice',
               builder: (context, state) => EditNoticeScreen(),
             ),
+            GoRoute(
+              path: 'edit_schedule',
+              builder: (context, state) => EditNoticeScreen(isNotice: false),
+            ),
           ],
         )
       ],
