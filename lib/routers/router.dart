@@ -75,8 +75,11 @@ final routerProvider = Provider<GoRouter>(
               builder: (_, __) => ContactScreen(),
             ),
             GoRoute(
-              path: 'schedule_detail',
-              builder: (_, __) => ScheduleDetailScreen(),
+              path: 'schedule_detail/:scheduleId',
+              builder: (_, state) => ScheduleDetailScreen(
+                scheduleId:
+                    int.parse(state.pathParameters['scheduleId'] ?? '0'),
+              ),
             ),
             GoRoute(
               path: 'notice',

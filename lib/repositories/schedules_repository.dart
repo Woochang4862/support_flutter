@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/dio/dio.dart';
+import 'package:support_flutter/models/schedule_detail_model.dart';
 import 'package:support_flutter/models/schedules_model.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
 
@@ -44,6 +45,28 @@ class SchedulesRepository {
     } else {
       throw SchedulesModelError.fromJson(response.data)
           .setType(SchedulesModelType.fetch);
+    }
+  }
+
+  // 특정 스케줄 조회
+  Future<ScheduleDetailModel> getSchedule({
+    required int scheduleId,
+  }) async {
+    final response = await dio.get(
+      '$baseUrl/${scheduleId}',
+    );
+
+    logger.d(response.data);
+
+    logger.d(
+        'getSchedules - ${response.realUri} 로 요청 성공! (${response.statusCode})');
+
+    if (response.statusCode == 200) {
+      return ScheduleDetailModel.fromJson(response.data)
+          .setType(ScheduleDetailModelType.fetch);
+    } else {
+      throw ScheduleDetailModelError.fromJson(response.data)
+          .setType(ScheduleDetailModelType.fetch);
     }
   }
 }

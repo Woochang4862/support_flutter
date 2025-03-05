@@ -119,13 +119,13 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                                       .createNotice(
                                           title: title, content: content);
                                 } else {
-                                  await ref
-                                      .read(schedulesViewModelProvider.notifier)
-                                      .createSchedule(
-                                          title: title,
-                                          content: content,
-                                          startDate: startDateString,
-                                          endDate: endDateString);
+                                  // await ref
+                                  //     .read(schedulesViewModelProvider.notifier)
+                                  //     .createSchedule(
+                                  //         title: title,
+                                  //         content: content,
+                                  //         startDate: startDateString,
+                                  //         endDate: endDateString);
                                 }
                               }
                             }, // 누르면 공지스크린 창에 추가되도록 기능 구현하기기
