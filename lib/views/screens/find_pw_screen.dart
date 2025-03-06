@@ -146,6 +146,42 @@ class _FindPwScreenState extends ConsumerState<FindPwScreen> {
                             fontSize: 14.sp,
                             color: const Color(0xFF989898),
                           ),
+                          suffixIcon: Container(
+                            margin: EdgeInsets.only(
+                                top: 8.h, bottom: 8.h, right: 8.w),
+
+                            //height: 38.h, //not working -> margin으로 높이 조절
+                            child: OutlinedButton(
+                              onPressed: state.isLoading
+                                  ? null
+                                  : () async {
+                                      final id = emailController.text.trim();
+                                      await ref
+                                          .read(
+                                              findPWViewModelProvider.notifier)
+                                          .findPW(id: id);
+                                    },
+                              style: OutlinedButton.styleFrom(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16.w,
+                                ),
+                                foregroundColor: Color(0xFFFFFFFF),
+                                backgroundColor: const Color(0xFF4F4F4F),
+                                side: BorderSide.none,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(8.r), // radius 18
+                                ),
+                                minimumSize: Size.zero,
+                              ),
+                              child: TextFontWidget.fontRegular(
+                                '초기화',
+                                color: const Color(0xFFFFFFFF),
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                       SizedBox(
@@ -156,42 +192,6 @@ class _FindPwScreenState extends ConsumerState<FindPwScreen> {
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w300,
                         color: Color(0xFF989898),
-                      ),
-                      SizedBox(
-                        height: 30.h,
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 56.h,
-                        child: OutlinedButton(
-                          onPressed: state.isLoading
-                              ? null
-                              : () async {
-                                  final id = emailController.text.trim();
-                                  await ref
-                                      .read(findPWViewModelProvider.notifier)
-                                      .findPW(id: id);
-                                },
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: mainColor,
-                            backgroundColor: const Color(0xFF4F4F4F),
-                            side: BorderSide.none,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.r),
-                            ),
-                          ),
-                          child: Text(
-                            '비밀번호 초기화',
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              color: const Color(0xFFFFFFFF),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 12.h,
                       ),
                     ],
                   ),

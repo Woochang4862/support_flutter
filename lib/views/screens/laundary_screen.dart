@@ -76,7 +76,7 @@ class _LaundaryScreenState extends ConsumerState<LaundaryScreen> {
                   return profile == null
                       ? Center(
                           child: TextFontWidget.fontRegular(
-                            '정보를 가져올 수 없습니다.\n[로그인] > [내 정보] > [기숙사 동] 수정',
+                            '로그인 후 이용해주세요.',
                             textAlign: TextAlign.center,
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w300,
@@ -88,7 +88,7 @@ class _LaundaryScreenState extends ConsumerState<LaundaryScreen> {
                 error: (Object error, StackTrace stackTrace) {
                   return Center(
                     child: TextFontWidget.fontRegular(
-                      '정보를 가져올 수 없습니다.\n[로그인] > [내 정보] > [기숙사 동] 수정',
+                      '로그인 후 이용해주세요.',
                       textAlign: TextAlign.center,
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w300,

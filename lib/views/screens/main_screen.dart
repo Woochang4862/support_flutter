@@ -50,6 +50,18 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         context.go('/login');
       },
     ),
+    "개인 정보 처리 방침": (
+      icon: MenuIcons.ic_shield,
+      routeFunc: (context, _) {
+        context.go('/privacy_policy');
+      },
+    ),
+    "서비스 이용약관": (
+      icon: MenuIcons.ic_file,
+      routeFunc: (context, _) {
+        context.go('/terms_of_service');
+      },
+    ),
   };
   final Map<String, Menu> _logInMenu = {
     "내 정보": (
@@ -73,7 +85,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     "서비스 이용약관": (
       icon: MenuIcons.ic_file,
       routeFunc: (context, _) {
-        context.go('/tems_of_serice');
+        context.go('/terms_of_service');
       },
     ),
     "로그아웃": (
