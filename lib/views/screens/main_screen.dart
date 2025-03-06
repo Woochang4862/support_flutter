@@ -113,9 +113,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     ref.listen(userViewModelProvider, (prev, next) {
       logger.d(next);
     });
-    ref.listen(noticeViewModelProvider, (prev, next) {
-      logger.d(next);
-    });
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       builder: (context, child) => Scaffold(
@@ -147,8 +144,14 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                   AppBarIcons.ic_notification,
                   size: 22.w,
                 ),
-                onPressed: () {
-                  context.go('/notice');
+                onPressed: () async {
+                  await ref
+                      .read(noticeViewModelProvider.notifier)
+                      .fetchNotices();
+                  if (context.mounted) {
+                    await context.push('/notice');
+                    ref.invalidate(noticeViewModelProvider);
+                  }
                 },
               ),
             )

@@ -1,9 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:support_flutter/models/schedule_detail_model.dart';
 import 'package:support_flutter/models/schedules_model.dart';
 import 'package:support_flutter/repositories/schedules_repository.dart';
 
 final scheduleDetailViewModelProvider = StateNotifierProvider.autoDispose
-    .family<ScheduleDetailViewModel, AsyncValue<SchedulesModel>, int>(
+    .family<ScheduleDetailViewModel, AsyncValue<ScheduleDetailModel>, int>(
         (ref, scheduleId) {
   final schedulesRepository = ref.watch(schedulesRepositoryProvider);
   return ScheduleDetailViewModel(
@@ -11,9 +12,9 @@ final scheduleDetailViewModelProvider = StateNotifierProvider.autoDispose
 });
 
 class ScheduleDetailViewModel
-    extends StateNotifier<AsyncValue<SchedulesModel>> {
+    extends StateNotifier<AsyncValue<ScheduleDetailModel>> {
   final SchedulesRepository schedulesRepository;
-  final scheduleId;
+  final int scheduleId;
   ScheduleDetailViewModel({
     required this.schedulesRepository,
     required this.scheduleId,
@@ -25,7 +26,7 @@ class ScheduleDetailViewModel
     try {
       state = const AsyncLoading();
       final response =
-          await schedulesRepository.getSchedules(scheduleId: scheduleId);
+          await schedulesRepository.getSchedule(scheduleId: scheduleId);
       state = AsyncData(response);
     } on SchedulesModelError catch (e) {
       state = AsyncError(e, e.stackTrace);

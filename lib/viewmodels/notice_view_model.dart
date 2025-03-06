@@ -81,39 +81,21 @@ class NoticeViewModel extends StateNotifier<AsyncValue<NoticeModel>> {
     }
   }
 
-  // 공지사항 수정
   Future<void> updateNotice({
-    required int noticeId,
+    required int id,
     required String title,
     required String content,
   }) async {
     try {
       state = const AsyncLoading();
-      final response = await noticeRepository.updateNotice(
-          noticeId: noticeId, title: title, content: content);
+      var response = await noticeRepository.updateNotice(
+          id: id, title: title, content: content);
       state = AsyncData(response);
     } on NoticeModelError catch (e) {
       state = AsyncError(e, e.stackTrace);
     } catch (e) {
       final error = NoticeModelError(
-          statusMessage: '예외발생 : $e', type: NoticeModelType.fetch);
-      state = AsyncError(error, error.stackTrace);
-    }
-  }
-
-// 공지사항 삭제
-  Future<void> deleteNotice({
-    required int noticeId,
-  }) async {
-    try {
-      state = const AsyncLoading();
-      final response = await noticeRepository.deleteNotice(noticeId: noticeId);
-      state = AsyncData(response);
-    } on NoticeModelError catch (e) {
-      state = AsyncError(e, e.stackTrace);
-    } catch (e) {
-      final error = NoticeModelError(
-          statusMessage: '예외발생 : $e', type: NoticeModelType.fetch);
+          statusMessage: '예외발생 : $e', type: NoticeModelType.update);
       state = AsyncError(error, error.stackTrace);
     }
   }

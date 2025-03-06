@@ -95,9 +95,8 @@ class NoticeRepository {
     }
   }
 
-  // 공지사항 수정
   Future<NoticeModel> updateNotice({
-    required int noticeId,
+    required int id,
     required String title,
     required String content,
   }) async {
@@ -106,7 +105,7 @@ class NoticeRepository {
       "content": content,
     };
     final response = await dio.put(
-      '$baseUrl/${noticeId}',
+      '$baseUrl/$id',
       data: body,
       options: Options(headers: {
         'accessToken': true,
@@ -122,37 +121,9 @@ class NoticeRepository {
       return NoticeModel.fromJson(response.data)
           .setType(NoticeModelType.update);
     } else {
-      // Bad Request
+      // 4xx
       throw NoticeModelError.fromJson(response.data)
           .setType(NoticeModelType.update);
-    }
-  }
-
-  // 공지사항 삭제
-  Future<NoticeModel> deleteNotice({
-    required int noticeId,
-  }) async {
-    final response = await dio.delete(
-      '$baseUrl/${noticeId}',
-      options: Options(
-        headers: {
-          'accessToken': true,
-        },
-      ),
-    );
-
-    logger.d(response.data);
-
-    logger.d(
-        'deleteNotice - ${response.realUri} 로 요청 성공! (${response.statusCode})');
-
-    if (response.statusCode == 200) {
-      return NoticeModel.fromJson(response.data)
-          .setType(NoticeModelType.delete);
-    } else {
-      // Bad Request
-      throw NoticeModelError.fromJson(response.data)
-          .setType(NoticeModelType.delete);
     }
   }
 }

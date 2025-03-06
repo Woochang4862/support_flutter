@@ -8,7 +8,6 @@ import 'package:support_flutter/views/screens/edit_profile_screen.dart';
 import 'package:support_flutter/views/screens/find_pw_screen.dart';
 import 'package:support_flutter/views/screens/login_screen.dart';
 import 'package:support_flutter/views/screens/main_screen.dart';
-import 'package:support_flutter/views/screens/notice_detail_screen.dart';
 import 'package:support_flutter/views/screens/notice_screen.dart';
 import 'package:support_flutter/views/screens/profile_screen.dart';
 import 'package:support_flutter/views/screens/schedule_detail_screen.dart';
@@ -75,29 +74,40 @@ final routerProvider = Provider<GoRouter>(
               builder: (_, __) => ContactScreen(),
             ),
             GoRoute(
-              path: 'schedule_detail/:id',
-              builder: (context, state) {
-                final id = int.tryParse(state.pathParameters['id'] ?? '') ??
-                    0; // 전달된 ID 가져오기
-                return ScheduleDetailScreen(scheduleId: id);
-              },
+              path: 'schedule_detail/:scheduleId',
+              builder: (_, state) => ScheduleDetailScreen(
+                scheduleId:
+                    int.parse(state.pathParameters['scheduleId'] ?? '0'),
+              ),
+              routes: [
+                // NoticeDetailScreen
+                GoRoute(
+                  path: 'edit_schedule',
+                  builder: (context, state) => EditNoticeScreen(
+                    isNotice: false,
+                    id: int.parse(state.pathParameters['scheduleId'] ?? '0'),
+                  ),
+                ),
+              ],
             ),
             GoRoute(
               path: 'notice',
               builder: (context, state) => NoticeScreen(),
               routes: [
-                // NoticeDetailScreen
+                // EditNoticeScreen
                 GoRoute(
-                  path: 'notice_detail',
-                  builder: (context, state) => NoticeDetailScreen(),
+                  path: 'edit_notice',
+                  builder: (context, state) => EditNoticeScreen(
+                    id: state.extra as int?,
+                  ),
                 ),
               ],
             ),
-            // EditNoticeScreen
             GoRoute(
-              path: 'edit_notice',
+              path: 'edit_schedule',
               builder: (context, state) => EditNoticeScreen(
-                noticeId: 0,
+                isNotice: false,
+                id: state.extra as int?,
               ),
             ),
           ],

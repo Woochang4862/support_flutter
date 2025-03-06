@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -5,13 +7,24 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/models/notice_model.dart';
+import 'package:support_flutter/models/schedule_detail_model.dart';
 import 'package:support_flutter/utils/dialog_manager.dart';
+import 'package:support_flutter/utils/extensions.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
+import 'package:support_flutter/viewmodels/edit_schedule_view_model.dart';
 import 'package:support_flutter/viewmodels/notice_view_model.dart';
 import 'package:intl/intl.dart';
+import 'package:support_flutter/viewmodels/schedule_detail_view_model.dart';
 
 class EditNoticeScreen extends ConsumerStatefulWidget {
-  const EditNoticeScreen({super.key, required int noticeId});
+  const EditNoticeScreen({
+    super.key,
+    this.isNotice = true,
+    this.id,
+  });
+
+  final bool isNotice;
+  final int? id;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -24,23 +37,75 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
 
   DateTime? startDate;
   DateTime? endDate;
+  int? color;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isNotice && widget.id != null) {
+      ref.refresh(noticeViewModelProvider);
+    } else if (!widget.isNotice && widget.id != null) {
+      ref.refresh(scheduleDetailViewModelProvider(widget.id!));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    contentController.addListener(() {});
-    titleController.addListener(() {});
-
     ref.listen(noticeViewModelProvider, (prev, next) {
       logger.d(next);
       next.when(
           data: (data) async {
             switch (data.type) {
               case NoticeModelType.fetch:
-                // 화면 닫기
-                context.pop();
+                if (widget.id != null) {
+                  final notice = data.data
+                      ?.firstWhere((element) => element.id == widget.id);
+                  if (notice != null) {
+                    titleController.text = notice.title;
+                    contentController.text = notice.content;
+                  }
+                }
                 break;
               case NoticeModelType.create:
-                ref.read(noticeViewModelProvider.notifier).fetchNotices();
+                context.pop();
+                break;
+              case NoticeModelType.update:
+                context.pop();
+                break;
+              default:
+            }
+          },
+          error: (error, stackTrace) {},
+          loading: () {});
+    });
+
+    if (!widget.isNotice && widget.id != null) {
+      ref.listen(scheduleDetailViewModelProvider(widget.id!), (prev, next) {
+        logger.d(next);
+        next.when(
+            data: (data) {
+              logger.d(data);
+              titleController.text = data.data?.title ?? '';
+              contentController.text = data.data?.content ?? '';
+              startDate = DateTime.tryParse(data.data?.startDate ?? '');
+              endDate = DateTime.tryParse(data.data?.endDate ?? '');
+              color = data.data?.color;
+              setState(() {});
+            },
+            error: (error, stackTrace) {},
+            loading: () {});
+      });
+    }
+    ref.listen(editScheduleViewModelProvider, (prev, next) {
+      logger.d(next);
+      next.when(
+          data: (data) {
+            switch (data?.type) {
+              case ScheduleDetailModelType.update:
+                context.pop();
+                break;
+              case ScheduleDetailModelType.create:
+                context.pop();
                 break;
               default:
             }
@@ -73,7 +138,7 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                         ),
                       ),
                       Text(
-                        '공지사항 작성',
+                        '${widget.isNotice ? '공지사항' : '일정'} 작성',
                         style: TextStyle(
                           fontSize: 18.sp,
                           color: const Color(0xFF111111),
@@ -100,12 +165,53 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                             onPressed: () async {
                               final title = titleController.text.trim();
                               final content = contentController.text;
+                              final startDateString =
+                                  (startDate ?? DateTime.now())
+                                      .format('yyyy-MM-dd');
+                              final endDateString = (endDate ?? DateTime.now())
+                                  .format('yyyy-MM-dd');
                               if (title.isNotEmpty && content.isNotEmpty) {
                                 // 서버로 요청
-                                await ref
-                                    .read(noticeViewModelProvider.notifier)
-                                    .createNotice(
-                                        title: title, content: content);
+                                if (widget.isNotice) {
+                                  if (widget.id == null) {
+                                    await ref
+                                        .read(noticeViewModelProvider.notifier)
+                                        .createNotice(
+                                            title: title, content: content);
+                                  } else {
+                                    await ref
+                                        .read(noticeViewModelProvider.notifier)
+                                        .updateNotice(
+                                            id: widget.id!,
+                                            title: title,
+                                            content: content);
+                                  }
+                                } else {
+                                  if (widget.id != null) {
+                                    await ref
+                                        .read(editScheduleViewModelProvider
+                                            .notifier)
+                                        .updateSchedule(
+                                          scheduleId: widget.id!,
+                                          title: title,
+                                          content: content,
+                                          startDate: startDateString,
+                                          endDate: endDateString,
+                                          color: color ?? Random().nextInt(5),
+                                        );
+                                  } else {
+                                    await ref
+                                        .read(editScheduleViewModelProvider
+                                            .notifier)
+                                        .createSchedule(
+                                          title: title,
+                                          content: content,
+                                          startDate: startDateString,
+                                          endDate: endDateString,
+                                          color: Random().nextInt(5),
+                                        ); // random color 0~4
+                                  }
+                                }
                               }
                             }, // 누르면 공지스크린 창에 추가되도록 기능 구현하기기
                             child: Text(
@@ -191,154 +297,130 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                           ),
                         ),
                       ),
-                      Positioned(
-                        bottom: (300).h,
-                        left: 0,
-                        right: 0,
-                        child: Divider(
-                          thickness: .3.h,
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 250.h,
-                        left: 0,
-                        right: 0,
-                        child: InkWell(
-                          onTap: () {
-                            DialogManager.instance.showDateRangePickerDialog(
-                              context: context,
-                              onComplete: (selecteDateRange) {
-                                logger.d(selecteDateRange);
-                                setState(() {
-                                  startDate = selecteDateRange?.start;
-                                  endDate = selecteDateRange?.end;
-                                });
-                              },
-                            );
-                          },
-                          child: Container(
-                            margin: EdgeInsets.only(left: 8.w),
-                            alignment: Alignment.centerLeft,
-                            height: 50.h,
-                            child: Table(
-                              columnWidths: const {
-                                0: IntrinsicColumnWidth(),
-                                1: IntrinsicColumnWidth(),
-                                2: IntrinsicColumnWidth(),
-                              },
-                              children: [
-                                TableRow(
-                                  children: [
-                                    TableCell(
-                                      child: Text(
-                                        '시작날짜',
-                                        style: TextStyle(
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w400,
-                                          color: const Color(0xFF727272),
-                                        ),
-                                      ),
-                                    ),
-                                    TableCell(
-                                      child: Text(
-                                        '  |  ',
-                                        style: TextStyle(
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w400,
-                                          color: const Color(0xFFD9D9D9),
-                                        ),
-                                      ),
-                                    ),
-                                    TableCell(
-                                      child: Text(
-                                        DateFormat('yy/MM/dd').format(
-                                            (startDate ?? DateTime.now())),
-                                        style: TextStyle(
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w400,
-                                          color: const Color(0xFF727272),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                TableRow(
-                                  children: [
-                                    TableCell(
-                                      child: Text(
-                                        '종료날짜',
-                                        style: TextStyle(
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w400,
-                                          color: const Color(0xFF727272),
-                                        ),
-                                      ),
-                                    ),
-                                    TableCell(
-                                      child: Text(
-                                        '  |  ',
-                                        style: TextStyle(
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w400,
-                                          color: const Color(0xFFD9D9D9),
-                                        ),
-                                      ),
-                                    ),
-                                    TableCell(
-                                      child: Text(
-                                        DateFormat('yy/MM/dd').format(
-                                            (endDate ?? DateTime.now())),
-                                        style: TextStyle(
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w400,
-                                          color: const Color(0xFF727272),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
               ),
+              bottomNavigationBar: (widget.isNotice)
+                  ? null
+                  : Container(
+                      padding: EdgeInsets.only(
+                          left: 16.w, right: 16.w, bottom: 16.h),
+                      child: InkWell(
+                        onTap: () {
+                          DialogManager.instance.showDateRangePickerDialog(
+                            context: context,
+                            initialDateRange:
+                                !(startDate?.equal(endDate) ?? true)
+                                    ? DateTimeRange(
+                                        start: startDate!, end: endDate!)
+                                    : null,
+                            initialDateTime: startDate?.equal(endDate) ?? false
+                                ? startDate
+                                : null,
+                            onCompleteDateRange: (selecteDateRange) {
+                              logger.d(selecteDateRange);
+                              setState(() {
+                                startDate = selecteDateRange?.start;
+                                endDate = selecteDateRange?.end;
+                              });
+                            },
+                            onCompleteDateTime: (selectedDate) {
+                              logger.d(selectedDate);
+                              setState(() {
+                                startDate = selectedDate;
+                                endDate = selectedDate;
+                              });
+                            },
+                          );
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(left: 8.w),
+                          alignment: Alignment.centerLeft,
+                          height: 50.h,
+                          child: Table(
+                            columnWidths: const {
+                              0: IntrinsicColumnWidth(),
+                              1: IntrinsicColumnWidth(),
+                              2: IntrinsicColumnWidth(),
+                            },
+                            children: [
+                              TableRow(
+                                children: [
+                                  TableCell(
+                                    child: Text(
+                                      '시작날짜',
+                                      style: TextStyle(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w400,
+                                        color: const Color(0xFF727272),
+                                      ),
+                                    ),
+                                  ),
+                                  TableCell(
+                                    child: Text(
+                                      '  |  ',
+                                      style: TextStyle(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w400,
+                                        color: const Color(0xFFD9D9D9),
+                                      ),
+                                    ),
+                                  ),
+                                  TableCell(
+                                    child: Text(
+                                      DateFormat('yyyy-MM-dd').format(
+                                          (startDate ?? DateTime.now())),
+                                      style: TextStyle(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w400,
+                                        color: const Color(0xFF727272),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              TableRow(
+                                children: [
+                                  TableCell(
+                                    child: Text(
+                                      '종료날짜',
+                                      style: TextStyle(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w400,
+                                        color: const Color(0xFF727272),
+                                      ),
+                                    ),
+                                  ),
+                                  TableCell(
+                                    child: Text(
+                                      '  |  ',
+                                      style: TextStyle(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w400,
+                                        color: const Color(0xFFD9D9D9),
+                                      ),
+                                    ),
+                                  ),
+                                  TableCell(
+                                    child: Text(
+                                      DateFormat('yyyy-MM-dd')
+                                          .format((endDate ?? DateTime.now())),
+                                      style: TextStyle(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w400,
+                                        color: const Color(0xFF727272),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
             ));
-  }
-
-  void showAlertDialog(BuildContext context, String text) async {
-    // await showDialog(
-    //     context: context,
-    //     builder: (_) => AlertTextDialog(
-    //           text: text,
-    //           onConfirmPressed: () {
-    //             Navigator.of(context).pop();
-    //           },
-    //         ));
-  }
-
-  bool nameIsInvalid(String? state) {
-    // if (state is SignUpModelError) {
-    //   switch (state.code) {
-    //     case "USR-207":
-    //     case "USR-F100":
-    //       return true;
-    //   }
-    // }
-    return false;
-  }
-
-  bool nickNameIsInvalid(String? state) {
-    // if (state is SignUpModelError) {
-    //   switch (state.code) {
-    //     case "USR-F400":
-    //       return true;
-    //   }
-    // }
-    return false;
   }
 
   @override

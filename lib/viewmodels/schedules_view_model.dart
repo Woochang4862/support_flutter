@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:support_flutter/models/schedules_model.dart';
 import 'package:support_flutter/repositories/schedules_repository.dart';
 
-final schedulesViewModelProvider = StateNotifierProviderFamily<
+final schedulesViewModelProvider = StateNotifierProvider.autoDispose.family<
     SchedulesViewModel, AsyncValue<Map<String, List<Schedule>>?>, String>(
   (ref, date) {
     final schedulesRepository = ref.watch(schedulesRepositoryProvider);

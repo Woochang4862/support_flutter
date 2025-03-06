@@ -38,7 +38,11 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                       userState.value!.data.role == "ROLE_MEMBER"
                   ? null
                   : FloatingActionButton(
-                      onPressed: () => context.go('/edit_notice'),
+                      onPressed: () async {
+                        await context.push('/edit_schedule');
+                        ref.invalidate(schedulesViewModelProvider(
+                            displayDate.format('yyyy-MM')));
+                      },
                       backgroundColor: mainColor,
                       shape: const CircleBorder(),
                       child: const Icon(
@@ -52,6 +56,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                   child: Column(
                     children: [
                       SchedulesView(
+                        initialSelectedDate: selectedDate,
                         displayDate: displayDate,
                         schedules: scheduleGroups!,
                         onMonthChanged: (date) {
@@ -83,11 +88,15 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                                   itemCount: schedules.length,
                                   itemBuilder: (context, index) {
                                     return NoticeItem(
-                                        title: schedules[index].title,
-                                        onItemClick: () {
-                                          context.go(
-                                              '/schedule_detail/${schedules[index].id}');
-                                        });
+                                      title: schedules[index].title,
+                                      onItemClick: () async {
+                                        await context.push(
+                                            '/schedule_detail/${schedules[index].id}');
+                                        ref.invalidate(
+                                            schedulesViewModelProvider(
+                                                displayDate.format('yyyy-MM')));
+                                      },
+                                    );
                                   },
                                   separatorBuilder:
                                       (BuildContext context, int index) {

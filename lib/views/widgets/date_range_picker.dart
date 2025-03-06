@@ -12,11 +12,9 @@ import 'package:support_flutter/utils/logging/logger.dart';
 class DateRangePicker extends StatefulWidget {
   DateRangePicker({
     super.key,
-    required this.displayDate,
     this.controller,
   });
 
-  DateTime displayDate;
   DateRangePickerController? controller;
 
   @override
@@ -37,10 +35,21 @@ class _DateRangePickerState extends State<DateRangePicker> {
   final headerDateFormat = DateFormat("yyyy년 M월");
   DateTime? _tempDate;
   DateTimeRange? selectedRange;
+  DateTime _displayDate = DateTime.now();
 
   @override
   void initState() {
     super.initState();
+    if (widget.controller?.selectedRange != null) {
+      selectedRange = widget.controller?.selectedRange!;
+      _displayDate = selectedRange!.start;
+    } else if (widget.controller?.selectedDate != null) {
+      _tempDate = widget.controller?.selectedDate!;
+      _displayDate = _tempDate!;
+    } else {
+      _tempDate = DateTime.now();
+      _displayDate = _tempDate!;
+    }
   }
 
   @override
@@ -74,7 +83,7 @@ class _DateRangePickerState extends State<DateRangePicker> {
               ),
             ),
             Text(
-              headerDateFormat.format(widget.displayDate),
+              headerDateFormat.format(_displayDate),
               style: TextStyle(
                 fontSize: 14.sp,
               ),
@@ -130,8 +139,7 @@ class _DateRangePickerState extends State<DateRangePicker> {
           height: 200.h,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children:
-                _buildCalendar(widget.displayDate, (DateTime selectedDate) {
+            children: _buildCalendar(_displayDate, (DateTime selectedDate) {
               if (_tempDate?.equal(selectedDate) ?? false) return;
               setState(() {
                 // selectedRange == null && tempDate == null -> tempDate = selectedDate
@@ -170,7 +178,7 @@ class _DateRangePickerState extends State<DateRangePicker> {
   }
 
   void addMonth(int monthToAdd) {
-    widget.displayDate = widget.displayDate.addDate(monthToAdd: monthToAdd);
+    _displayDate = _displayDate.addDate(monthToAdd: monthToAdd);
   }
 
   List<Widget> _buildCalendar(

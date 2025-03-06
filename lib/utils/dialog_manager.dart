@@ -45,14 +45,25 @@ class DialogManager {
 
   Future<void> showDateRangePickerDialog({
     required BuildContext context,
-    Function(DateTimeRange? selecteDateRange)? onComplete,
+    DateTimeRange? initialDateRange,
+    DateTime? initialDateTime,
+    Function(DateTimeRange? selecteDateRange)? onCompleteDateRange,
+    Function(DateTime? selectedDate)? onCompleteDateTime,
     barrierDismissible = true,
   }) async {
-    final result = await showDialog<DateTimeRange?>(
+    final result = await showDialog(
       barrierDismissible: barrierDismissible,
       context: context,
-      builder: (_) => const DateRangePickerDialog(),
+      builder: (_) => DateRangePickerDialog(
+        initialDateRange: initialDateRange,
+        initialDateTime: initialDateTime,
+      ),
     );
-    onComplete?.call(result);
+
+    if (result is DateTimeRange) {
+      onCompleteDateRange?.call(result);
+    } else if (result is DateTime) {
+      onCompleteDateTime?.call(result);
+    }
   }
 }
