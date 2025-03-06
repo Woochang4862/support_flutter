@@ -68,3 +68,13 @@ extension DormTypeExt on List<DormType> {
     return map((e) => (icon: e.icon, label: e.korean)).toList();
   }
 }
+
+extension StringExt on String {
+  String encodeHtml() {
+    return replaceAll('\n', '<br>').replaceAll(' ', '&nbsp;');
+  }
+
+  String decodeHtml() {
+    return replaceAll('<br>', '\n').replaceAll('&nbsp;', ' ');
+  }
+}

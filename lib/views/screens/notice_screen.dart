@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -315,12 +316,15 @@ class _NoticeScreenState extends ConsumerState<NoticeScreen> {
                                                   ],
                                                 ),
                                                 Divider(thickness: 0.5.h),
-                                                TextFontWidget.fontRegular(
-                                                  notice.content,
-                                                  fontSize: 14.sp,
-                                                  color:
-                                                      const Color(0xFF333333),
+                                                Html(
+                                                  data: notice.content,
                                                 ),
+                                                // TextFontWidget.fontRegular(
+                                                //   notice.content,
+                                                //   fontSize: 14.sp,
+                                                //   color:
+                                                //       const Color(0xFF333333),
+                                                // ),
                                               ],
                                             )
                                           : Row(

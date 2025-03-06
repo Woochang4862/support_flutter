@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -62,7 +63,7 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                       ?.firstWhere((element) => element.id == widget.id);
                   if (notice != null) {
                     titleController.text = notice.title;
-                    contentController.text = notice.content;
+                    contentController.text = notice.content.decodeHtml();
                   }
                 }
                 break;
@@ -86,7 +87,7 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
             data: (data) {
               logger.d(data);
               titleController.text = data.data?.title ?? '';
-              contentController.text = data.data?.content ?? '';
+              contentController.text = data.data?.content.decodeHtml() ?? '';
               startDate = DateTime.tryParse(data.data?.startDate ?? '');
               endDate = DateTime.tryParse(data.data?.endDate ?? '');
               color = data.data?.color;
@@ -164,7 +165,7 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                             ),
                             onPressed: () async {
                               final title = titleController.text.trim();
-                              final content = contentController.text;
+                              var content = contentController.text.encodeHtml();
                               final startDateString =
                                   (startDate ?? DateTime.now())
                                       .format('yyyy-MM-dd');

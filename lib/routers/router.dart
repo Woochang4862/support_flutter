@@ -9,6 +9,7 @@ import 'package:support_flutter/views/screens/find_pw_screen.dart';
 import 'package:support_flutter/views/screens/login_screen.dart';
 import 'package:support_flutter/views/screens/main_screen.dart';
 import 'package:support_flutter/views/screens/notice_screen.dart';
+import 'package:support_flutter/views/screens/policy_screen.dart';
 import 'package:support_flutter/views/screens/profile_screen.dart';
 import 'package:support_flutter/views/screens/schedule_detail_screen.dart';
 import 'package:support_flutter/views/screens/sign_up_screen.dart';
@@ -68,11 +69,6 @@ final routerProvider = Provider<GoRouter>(
               path: 'contact',
               builder: (_, __) => ContactScreen(),
             ),
-            // PolicyScreen
-            GoRoute(
-              path: 'privacy_policy',
-              builder: (_, __) => ContactScreen(),
-            ),
             GoRoute(
               path: 'schedule_detail/:scheduleId',
               builder: (_, state) => ScheduleDetailScreen(
@@ -110,8 +106,25 @@ final routerProvider = Provider<GoRouter>(
                 id: state.extra as int?,
               ),
             ),
+            GoRoute(
+              path: 'terms_of_service',
+              builder: (_, __) => PolicyScreen(
+                  policyType: PolicyType.termsOfService, isDialog: false),
+            ),
+            GoRoute(
+              path: 'privacy_policy',
+              builder: (_, __) => PolicyScreen(
+                  policyType: PolicyType.privacyPolicy, isDialog: false),
+            ),
+            GoRoute(
+              path: 'personal_information_collection_and_usage_agreement',
+              builder: (_, __) => PolicyScreen(
+                  policyType:
+                      PolicyType.personalInformationCollectionAndUsageAgreement,
+                  isDialog: false),
+            ),
           ],
-        )
+        ),
       ],
       observers: [
         RefreshObserver(ref: ref),

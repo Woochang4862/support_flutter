@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart' hide DateRangePickerDialog;
+import 'package:support_flutter/views/screens/policy_screen.dart';
 import 'package:support_flutter/views/widgets/alert_text_dialog.dart';
 import 'package:support_flutter/views/widgets/date_range_picker_dialog.dart';
+import 'package:support_flutter/views/widgets/policy_dialog.dart';
 
 class DialogManager {
   DialogManager._();
@@ -65,5 +67,13 @@ class DialogManager {
     } else if (result is DateTime) {
       onCompleteDateTime?.call(result);
     }
+  }
+
+  Future<bool> showPolicyDialog(
+      BuildContext context, PolicyType policyType) async {
+    return await showDialog(
+            context: context,
+            builder: (_) => PolicyDialog(policyType: policyType)) ??
+        true;
   }
 }
