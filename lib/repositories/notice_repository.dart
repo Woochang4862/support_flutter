@@ -84,10 +84,44 @@ class NoticeRepository {
         'createNotice - ${response.realUri} 로 요청 성공! (${response.statusCode})');
 
     if (response.statusCode == 200) {
-      return NoticeModel.fromJson(response.data).setType(NoticeModelType.create);
-    } else { // 4xx
+      return NoticeModel.fromJson(response.data)
+          .setType(NoticeModelType.create);
+    } else {
+      // 4xx
       throw NoticeModelError.fromJson(response.data)
           .setType(NoticeModelType.fetch);
+    }
+  }
+
+  Future<NoticeModel> updateNotice({
+    required int id,
+    required String title,
+    required String content,
+  }) async {
+    final body = {
+      "title": title,
+      "content": content,
+    };
+    final response = await dio.put(
+      '$baseUrl/$id',
+      data: body,
+      options: Options(headers: {
+        'accessToken': true,
+      }),
+    );
+
+    logger.d(response.data);
+
+    logger.d(
+        'updateNotice - ${response.realUri} 로 요청 성공! (${response.statusCode})');
+
+    if (response.statusCode == 200) {
+      return NoticeModel.fromJson(response.data)
+          .setType(NoticeModelType.update);
+    } else {
+      // 4xx
+      throw NoticeModelError.fromJson(response.data)
+          .setType(NoticeModelType.update);
     }
   }
 }

@@ -7,6 +7,7 @@ import 'package:support_flutter/models/schedule_detail_model.dart';
 import 'package:support_flutter/utils/dialog_manager.dart';
 import 'package:support_flutter/utils/icons/notice_icons_icons.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
+import 'package:support_flutter/viewmodels/edit_schedule_view_model.dart';
 import 'package:support_flutter/viewmodels/schedule_detail_view_model.dart';
 import 'package:support_flutter/viewmodels/user_view_model.dart';
 import 'package:support_flutter/views/widgets/text_font_widget.dart';
@@ -39,6 +40,22 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
               case ScheduleDetailModelType.fetch:
                 break;
               default:
+            }
+          },
+          error: (error, stackTrace) {},
+          loading: () {},
+        );
+      },
+    );
+
+    ref.listen(
+      editScheduleViewModelProvider,
+      (prev, next) {
+        logger.d(next);
+        next.when(
+          data: (data) {
+            if (data != null) {
+              context.pop();
             }
           },
           error: (error, stackTrace) {},
@@ -101,6 +118,9 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
               child: scheduleState.when(
                 data: (data) {
                   final schedule = data.data;
+                  if (schedule == null) {
+                    return const Center(child: Text('일정을 불러오지 못했습니다.'));
+                  }
                   return SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,50 +149,49 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
                                       PopupMenuItem(
                                         padding: EdgeInsets.zero,
                                         value: 'modify',
-                                        child: Container(
-                                          color: Colors.white,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                NoticeIcons.ic_pencil,
-                                                color: const Color(0xFF8E8E8E),
-                                                size: 17.sp,
-                                              ),
-                                              SizedBox(width: 8.w),
-                                              const Text('수정'),
-                                            ],
-                                          ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              NoticeIcons.ic_pencil,
+                                              color: const Color(0xFF8E8E8E),
+                                              size: 17.sp,
+                                            ),
+                                            SizedBox(width: 8.w),
+                                            const Text('수정'),
+                                          ],
                                         ),
                                       ),
                                       PopupMenuItem(
                                         padding: EdgeInsets.zero,
                                         value: 'delete',
-                                        child: Container(
-                                          color: Colors.white,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                NoticeIcons.ic_waste_bin,
-                                                color: const Color(0xFFFF6F6F),
-                                                size: 20.sp,
-                                              ),
-                                              SizedBox(width: 8.w),
-                                              const Text('삭제',
-                                                  style: TextStyle(
-                                                      color:
-                                                          Color(0xFFFF6F6F))),
-                                            ],
-                                          ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              NoticeIcons.ic_waste_bin,
+                                              color: const Color(0xFFFF6F6F),
+                                              size: 20.sp,
+                                            ),
+                                            SizedBox(width: 8.w),
+                                            const Text('삭제',
+                                                style: TextStyle(
+                                                    color: Color(0xFFFF6F6F))),
+                                          ],
                                         ),
                                       ),
                                     ],
-                                    onSelected: (value) {
+                                    onSelected: (value) async {
                                       if (value == 'modify') {
                                         // 수정 액션
+                                        await context.push(
+                                          '/schedule_detail/$scheduleId/edit_schedule',
+                                        );
+                                        ref.invalidate(
+                                            scheduleDetailViewModelProvider(
+                                                scheduleId));
                                       } else if (value == 'delete') {
                                         DialogManager.instance.showAlertDialog(
                                           context: context,
@@ -180,19 +199,14 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
                                           leftButtonText: '취소',
                                           rightButtonText: '삭제',
                                           onRightButtonPressed: () async {
-                                            try {
-                                              // await deleteNoticeViewModel
-                                              //     .deleteNotice(
-                                              //         noticeId: notice.id);
-                                              // ref.refresh(
-                                              //     noticeViewModelProvider);
-                                              Navigator.pop(context);
-                                            } catch (e) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                    content: Text('삭제 실패: $e')),
-                                              );
+                                            await ref
+                                                .read(
+                                                    editScheduleViewModelProvider
+                                                        .notifier)
+                                                .deleteSchedule(
+                                                    scheduleId: scheduleId);
+                                            if (context.mounted) {
+                                              context.pop();
                                             }
                                           },
                                           isTitleShow: false,

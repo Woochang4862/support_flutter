@@ -27,7 +27,7 @@ class DeleteNoticeRepository {
     required int noticeId,
   }) async {
     final response = await dio.delete(
-      '$baseUrl/${noticeId}/delete',
+      '$baseUrl/$noticeId',
       options: Options(
         headers: {
           'accessToken': true,

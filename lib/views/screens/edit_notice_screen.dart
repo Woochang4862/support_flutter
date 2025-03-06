@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -5,17 +7,24 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/models/notice_model.dart';
+import 'package:support_flutter/models/schedule_detail_model.dart';
 import 'package:support_flutter/utils/dialog_manager.dart';
 import 'package:support_flutter/utils/extensions.dart';
 import 'package:support_flutter/utils/logging/logger.dart';
+import 'package:support_flutter/viewmodels/edit_schedule_view_model.dart';
 import 'package:support_flutter/viewmodels/notice_view_model.dart';
 import 'package:intl/intl.dart';
-import 'package:support_flutter/viewmodels/schedules_view_model.dart';
+import 'package:support_flutter/viewmodels/schedule_detail_view_model.dart';
 
 class EditNoticeScreen extends ConsumerStatefulWidget {
-  const EditNoticeScreen({super.key, this.isNotice = true});
+  const EditNoticeScreen({
+    super.key,
+    this.isNotice = true,
+    this.id,
+  });
 
   final bool isNotice;
+  final int? id;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -28,23 +37,75 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
 
   DateTime? startDate;
   DateTime? endDate;
+  int? color;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isNotice && widget.id != null) {
+      ref.refresh(noticeViewModelProvider);
+    } else if (!widget.isNotice && widget.id != null) {
+      ref.refresh(scheduleDetailViewModelProvider(widget.id!));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    contentController.addListener(() {});
-    titleController.addListener(() {});
-
     ref.listen(noticeViewModelProvider, (prev, next) {
       logger.d(next);
       next.when(
           data: (data) async {
             switch (data.type) {
               case NoticeModelType.fetch:
-                // 화면 닫기
-                context.pop();
+                if (widget.id != null) {
+                  final notice = data.data
+                      ?.firstWhere((element) => element.id == widget.id);
+                  if (notice != null) {
+                    titleController.text = notice.title;
+                    contentController.text = notice.content;
+                  }
+                }
                 break;
               case NoticeModelType.create:
-                ref.read(noticeViewModelProvider.notifier).fetchNotices();
+                context.pop();
+                break;
+              case NoticeModelType.update:
+                context.pop();
+                break;
+              default:
+            }
+          },
+          error: (error, stackTrace) {},
+          loading: () {});
+    });
+
+    if (!widget.isNotice && widget.id != null) {
+      ref.listen(scheduleDetailViewModelProvider(widget.id!), (prev, next) {
+        logger.d(next);
+        next.when(
+            data: (data) {
+              logger.d(data);
+              titleController.text = data.data?.title ?? '';
+              contentController.text = data.data?.content ?? '';
+              startDate = DateTime.tryParse(data.data?.startDate ?? '');
+              endDate = DateTime.tryParse(data.data?.endDate ?? '');
+              color = data.data?.color;
+              setState(() {});
+            },
+            error: (error, stackTrace) {},
+            loading: () {});
+      });
+    }
+    ref.listen(editScheduleViewModelProvider, (prev, next) {
+      logger.d(next);
+      next.when(
+          data: (data) {
+            switch (data?.type) {
+              case ScheduleDetailModelType.update:
+                context.pop();
+                break;
+              case ScheduleDetailModelType.create:
+                context.pop();
                 break;
               default:
             }
@@ -105,27 +166,51 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                               final title = titleController.text.trim();
                               final content = contentController.text;
                               final startDateString =
-                                  startDate?.format('yyyy-MM-dd');
-                              final endDateString =
-                                  endDate?.format('yyyy-MM-dd');
-                              if (title.isNotEmpty &&
-                                  content.isNotEmpty &&
-                                  startDateString != null &&
-                                  endDateString != null) {
+                                  (startDate ?? DateTime.now())
+                                      .format('yyyy-MM-dd');
+                              final endDateString = (endDate ?? DateTime.now())
+                                  .format('yyyy-MM-dd');
+                              if (title.isNotEmpty && content.isNotEmpty) {
                                 // 서버로 요청
                                 if (widget.isNotice) {
-                                  await ref
-                                      .read(noticeViewModelProvider.notifier)
-                                      .createNotice(
-                                          title: title, content: content);
+                                  if (widget.id == null) {
+                                    await ref
+                                        .read(noticeViewModelProvider.notifier)
+                                        .createNotice(
+                                            title: title, content: content);
+                                  } else {
+                                    await ref
+                                        .read(noticeViewModelProvider.notifier)
+                                        .updateNotice(
+                                            id: widget.id!,
+                                            title: title,
+                                            content: content);
+                                  }
                                 } else {
-                                  // await ref
-                                  //     .read(schedulesViewModelProvider.notifier)
-                                  //     .createSchedule(
-                                  //         title: title,
-                                  //         content: content,
-                                  //         startDate: startDateString,
-                                  //         endDate: endDateString);
+                                  if (widget.id != null) {
+                                    await ref
+                                        .read(editScheduleViewModelProvider
+                                            .notifier)
+                                        .updateSchedule(
+                                          scheduleId: widget.id!,
+                                          title: title,
+                                          content: content,
+                                          startDate: startDateString,
+                                          endDate: endDateString,
+                                          color: color ?? Random().nextInt(5),
+                                        );
+                                  } else {
+                                    await ref
+                                        .read(editScheduleViewModelProvider
+                                            .notifier)
+                                        .createSchedule(
+                                          title: title,
+                                          content: content,
+                                          startDate: startDateString,
+                                          endDate: endDateString,
+                                          color: Random().nextInt(5),
+                                        ); // random color 0~4
+                                  }
                                 }
                               }
                             }, // 누르면 공지스크린 창에 추가되도록 기능 구현하기기
@@ -225,11 +310,26 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                         onTap: () {
                           DialogManager.instance.showDateRangePickerDialog(
                             context: context,
-                            onComplete: (selecteDateRange) {
+                            initialDateRange:
+                                !(startDate?.equal(endDate) ?? true)
+                                    ? DateTimeRange(
+                                        start: startDate!, end: endDate!)
+                                    : null,
+                            initialDateTime: startDate?.equal(endDate) ?? false
+                                ? startDate
+                                : null,
+                            onCompleteDateRange: (selecteDateRange) {
                               logger.d(selecteDateRange);
                               setState(() {
                                 startDate = selecteDateRange?.start;
                                 endDate = selecteDateRange?.end;
+                              });
+                            },
+                            onCompleteDateTime: (selectedDate) {
+                              logger.d(selectedDate);
+                              setState(() {
+                                startDate = selectedDate;
+                                endDate = selectedDate;
                               });
                             },
                           );
@@ -269,7 +369,7 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                                   ),
                                   TableCell(
                                     child: Text(
-                                      DateFormat('yy/MM/dd').format(
+                                      DateFormat('yyyy-MM-dd').format(
                                           (startDate ?? DateTime.now())),
                                       style: TextStyle(
                                         fontSize: 14.sp,
@@ -304,7 +404,7 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
                                   ),
                                   TableCell(
                                     child: Text(
-                                      DateFormat('yy/MM/dd')
+                                      DateFormat('yyyy-MM-dd')
                                           .format((endDate ?? DateTime.now())),
                                       style: TextStyle(
                                         fontSize: 14.sp,

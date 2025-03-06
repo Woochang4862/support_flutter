@@ -15,13 +15,14 @@ class SchedulesView extends ConsumerStatefulWidget {
     required this.schedules,
     required this.onSelectionChanged,
     required this.onMonthChanged,
+    this.initialSelectedDate,
   });
 
   DateTime displayDate;
   final Map<String, List<Schedule>> schedules;
   final Function(DateTime selectedDate) onSelectionChanged;
   final Function(DateTime date) onMonthChanged;
-
+  final DateTime? initialSelectedDate;
   @override
   _SchedulesViewState createState() => _SchedulesViewState();
 }
@@ -41,7 +42,9 @@ class _SchedulesViewState extends ConsumerState<SchedulesView> {
   @override
   void initState() {
     final now = DateTime.now();
-    if (now.year == widget.displayDate.year &&
+    if (widget.initialSelectedDate != null) {
+      _selectedDate = widget.initialSelectedDate!;
+    } else if (now.year == widget.displayDate.year &&
         now.month == widget.displayDate.month) {
       _selectedDate = DateTime(now.year, now.month, now.day);
     } else {

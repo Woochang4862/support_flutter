@@ -5,14 +5,31 @@ import 'package:support_flutter/views/widgets/date_range_picker.dart';
 import 'package:support_flutter/views/widgets/text_font_widget.dart';
 
 class DateRangePickerDialog extends StatefulWidget {
-  const DateRangePickerDialog({super.key});
+  const DateRangePickerDialog({
+    super.key,
+    this.initialDateRange,
+    this.initialDateTime,
+  });
 
+  final DateTimeRange? initialDateRange;
+  final DateTime? initialDateTime;
   @override
   _DateRangePickerDialogState createState() => _DateRangePickerDialogState();
 }
 
 class _DateRangePickerDialogState extends State<DateRangePickerDialog> {
   DateRangePickerController controller = DateRangePickerController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialDateRange != null) {
+      controller.selectedRange = widget.initialDateRange;
+    } else if (widget.initialDateTime != null) {
+      controller.selectedDate = widget.initialDateTime;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -34,7 +51,6 @@ class _DateRangePickerDialogState extends State<DateRangePickerDialog> {
                       ),
                       child: DateRangePicker(
                         controller: controller,
-                        displayDate: DateTime.now(),
                       ),
                     ),
                     SizedBox.fromSize(

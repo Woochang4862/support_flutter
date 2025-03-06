@@ -12,7 +12,9 @@ _$ScheduleDetailModelImpl _$$ScheduleDetailModelImplFromJson(
       statusCode: (json['statusCode'] as num).toInt(),
       statusMessage: json['statusMessage'] as String,
       responseTime: json['responseTime'] as String,
-      data: Data.fromJson(json['data'] as Map<String, dynamic>),
+      data: json['data'] == null
+          ? null
+          : Data.fromJson(json['data'] as Map<String, dynamic>),
       code: json['code'] as String,
       type: $enumDecodeNullable(_$ScheduleDetailModelTypeEnumMap, json['type']),
     );
@@ -23,7 +25,7 @@ Map<String, dynamic> _$$ScheduleDetailModelImplToJson(
       'statusCode': instance.statusCode,
       'statusMessage': instance.statusMessage,
       'responseTime': instance.responseTime,
-      'data': instance.data.toJson(),
+      'data': instance.data?.toJson(),
       'code': instance.code,
       'type': _$ScheduleDetailModelTypeEnumMap[instance.type],
     };

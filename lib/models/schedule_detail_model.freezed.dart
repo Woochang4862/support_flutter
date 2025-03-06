@@ -27,7 +27,7 @@ mixin _$ScheduleDetailModel {
   @JsonKey(name: "responseTime")
   String get responseTime => throw _privateConstructorUsedError;
   @JsonKey(name: "data")
-  Data get data => throw _privateConstructorUsedError;
+  Data? get data => throw _privateConstructorUsedError;
   @JsonKey(name: "code")
   String get code => throw _privateConstructorUsedError;
   ScheduleDetailModelType? get type => throw _privateConstructorUsedError;
@@ -52,11 +52,11 @@ abstract class $ScheduleDetailModelCopyWith<$Res> {
       {@JsonKey(name: "statusCode") int statusCode,
       @JsonKey(name: "statusMessage") String statusMessage,
       @JsonKey(name: "responseTime") String responseTime,
-      @JsonKey(name: "data") Data data,
+      @JsonKey(name: "data") Data? data,
       @JsonKey(name: "code") String code,
       ScheduleDetailModelType? type});
 
-  $DataCopyWith<$Res> get data;
+  $DataCopyWith<$Res>? get data;
 }
 
 /// @nodoc
@@ -77,7 +77,7 @@ class _$ScheduleDetailModelCopyWithImpl<$Res, $Val extends ScheduleDetailModel>
     Object? statusCode = null,
     Object? statusMessage = null,
     Object? responseTime = null,
-    Object? data = null,
+    Object? data = freezed,
     Object? code = null,
     Object? type = freezed,
   }) {
@@ -94,10 +94,10 @@ class _$ScheduleDetailModelCopyWithImpl<$Res, $Val extends ScheduleDetailModel>
           ? _value.responseTime
           : responseTime // ignore: cast_nullable_to_non_nullable
               as String,
-      data: null == data
+      data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
-              as Data,
+              as Data?,
       code: null == code
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
@@ -113,8 +113,12 @@ class _$ScheduleDetailModelCopyWithImpl<$Res, $Val extends ScheduleDetailModel>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $DataCopyWith<$Res> get data {
-    return $DataCopyWith<$Res>(_value.data, (value) {
+  $DataCopyWith<$Res>? get data {
+    if (_value.data == null) {
+      return null;
+    }
+
+    return $DataCopyWith<$Res>(_value.data!, (value) {
       return _then(_value.copyWith(data: value) as $Val);
     });
   }
@@ -132,12 +136,12 @@ abstract class _$$ScheduleDetailModelImplCopyWith<$Res>
       {@JsonKey(name: "statusCode") int statusCode,
       @JsonKey(name: "statusMessage") String statusMessage,
       @JsonKey(name: "responseTime") String responseTime,
-      @JsonKey(name: "data") Data data,
+      @JsonKey(name: "data") Data? data,
       @JsonKey(name: "code") String code,
       ScheduleDetailModelType? type});
 
   @override
-  $DataCopyWith<$Res> get data;
+  $DataCopyWith<$Res>? get data;
 }
 
 /// @nodoc
@@ -156,7 +160,7 @@ class __$$ScheduleDetailModelImplCopyWithImpl<$Res>
     Object? statusCode = null,
     Object? statusMessage = null,
     Object? responseTime = null,
-    Object? data = null,
+    Object? data = freezed,
     Object? code = null,
     Object? type = freezed,
   }) {
@@ -173,10 +177,10 @@ class __$$ScheduleDetailModelImplCopyWithImpl<$Res>
           ? _value.responseTime
           : responseTime // ignore: cast_nullable_to_non_nullable
               as String,
-      data: null == data
+      data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
-              as Data,
+              as Data?,
       code: null == code
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
@@ -197,7 +201,7 @@ class _$ScheduleDetailModelImpl extends _ScheduleDetailModel {
       {@JsonKey(name: "statusCode") required this.statusCode,
       @JsonKey(name: "statusMessage") required this.statusMessage,
       @JsonKey(name: "responseTime") required this.responseTime,
-      @JsonKey(name: "data") required this.data,
+      @JsonKey(name: "data") this.data,
       @JsonKey(name: "code") required this.code,
       this.type})
       : super._();
@@ -216,7 +220,7 @@ class _$ScheduleDetailModelImpl extends _ScheduleDetailModel {
   final String responseTime;
   @override
   @JsonKey(name: "data")
-  final Data data;
+  final Data? data;
   @override
   @JsonKey(name: "code")
   final String code;
@@ -271,7 +275,7 @@ abstract class _ScheduleDetailModel extends ScheduleDetailModel {
       {@JsonKey(name: "statusCode") required final int statusCode,
       @JsonKey(name: "statusMessage") required final String statusMessage,
       @JsonKey(name: "responseTime") required final String responseTime,
-      @JsonKey(name: "data") required final Data data,
+      @JsonKey(name: "data") final Data? data,
       @JsonKey(name: "code") required final String code,
       final ScheduleDetailModelType? type}) = _$ScheduleDetailModelImpl;
   _ScheduleDetailModel._() : super._();
@@ -290,7 +294,7 @@ abstract class _ScheduleDetailModel extends ScheduleDetailModel {
   String get responseTime;
   @override
   @JsonKey(name: "data")
-  Data get data;
+  Data? get data;
   @override
   @JsonKey(name: "code")
   String get code;

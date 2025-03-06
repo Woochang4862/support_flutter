@@ -20,7 +20,7 @@ class ScheduleDetailModel with _$ScheduleDetailModel {
     @JsonKey(name: "statusCode") required int statusCode,
     @JsonKey(name: "statusMessage") required String statusMessage,
     @JsonKey(name: "responseTime") required String responseTime,
-    @JsonKey(name: "data") required Data data,
+    @JsonKey(name: "data") Data? data,
     @JsonKey(name: "code") required String code,
     ScheduleDetailModelType? type,
   }) = _ScheduleDetailModel;
@@ -35,6 +35,7 @@ class ScheduleDetailModel with _$ScheduleDetailModel {
         responseTime: responseTime,
         data: data,
         code: code,
+        type: type,
       );
 }
 

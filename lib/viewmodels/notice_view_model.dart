@@ -78,4 +78,23 @@ class NoticeViewModel extends StateNotifier<AsyncValue<NoticeModel>> {
       state = AsyncError(error, error.stackTrace);
     }
   }
+
+  Future<void> updateNotice({
+    required int id,
+    required String title,
+    required String content,
+  }) async {
+    try {
+      state = const AsyncLoading();
+      var response = await noticeRepository.updateNotice(
+          id: id, title: title, content: content);
+      state = AsyncData(response);
+    } on NoticeModelError catch (e) {
+      state = AsyncError(e, e.stackTrace);
+    } catch (e) {
+      final error = NoticeModelError(
+          statusMessage: '예외발생 : $e', type: NoticeModelType.update);
+      state = AsyncError(error, error.stackTrace);
+    }
+  }
 }
