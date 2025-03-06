@@ -19,6 +19,7 @@ class NoticeViewModel extends StateNotifier<AsyncValue<NoticeModel>> {
     fetchNotices();
   }
 
+// 공지사항 조회
   Future<void> fetchNotices() async {
     try {
       state = const AsyncLoading();
@@ -59,6 +60,7 @@ class NoticeViewModel extends StateNotifier<AsyncValue<NoticeModel>> {
     return notices;
   }
 
+// 공지사항 작성
   Future<void> createNotice({
     required String title,
     required String content,

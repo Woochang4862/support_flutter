@@ -42,6 +42,8 @@ class LoginData with _$LoginData {
   factory LoginData.fromJson(Map<String, dynamic> json) =>
       _$LoginDataFromJson(json);
 
+  get id => null;
+
   LoginData setRole(String? role) => LoginData(
       accessToken: accessToken, refreshToken: refreshToken, role: role);
 }

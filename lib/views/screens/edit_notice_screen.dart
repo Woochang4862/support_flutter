@@ -423,27 +423,6 @@ class _EditNoticeScreenState extends ConsumerState<EditNoticeScreen> {
             ));
   }
 
-  bool nameIsInvalid(String? state) {
-    // if (state is SignUpModelError) {
-    //   switch (state.code) {
-    //     case "USR-207":
-    //     case "USR-F100":
-    //       return true;
-    //   }
-    // }
-    return false;
-  }
-
-  bool nickNameIsInvalid(String? state) {
-    // if (state is SignUpModelError) {
-    //   switch (state.code) {
-    //     case "USR-F400":
-    //       return true;
-    //   }
-    // }
-    return false;
-  }
-
   @override
   void dispose() {
     titleController.dispose();

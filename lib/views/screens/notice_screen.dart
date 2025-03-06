@@ -6,10 +6,10 @@ import 'package:go_router/go_router.dart';
 import 'package:support_flutter/const/data.dart';
 import 'package:support_flutter/models/notice_model.dart';
 import 'package:support_flutter/utils/icons/notice_icons_icons.dart';
+import 'package:support_flutter/viewmodels/delete_notice_view_model.dart';
 import 'package:support_flutter/viewmodels/user_view_model.dart';
 import 'package:support_flutter/views/widgets/text_font_widget.dart';
 import 'package:support_flutter/viewmodels/notice_view_model.dart';
-import 'package:support_flutter/viewmodels/delete_notice_view_model.dart'; // 추가
 
 class NoticeScreen extends ConsumerStatefulWidget {
   const NoticeScreen({super.key});

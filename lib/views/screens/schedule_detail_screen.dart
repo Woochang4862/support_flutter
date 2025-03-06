@@ -23,6 +23,8 @@ class ScheduleDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
+  List<bool> _isExpanded = [];
+
   @override
   Widget build(BuildContext context) {
     final userState = ref.watch(userViewModelProvider);

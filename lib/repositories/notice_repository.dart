@@ -29,6 +29,7 @@ class NoticeRepository {
     required this.secureStorage,
   });
 
+  // 공지사항 조회
   Future<NoticeModel> getNotices() async {
     final response = await dio.get(
       '$baseUrl',
@@ -62,6 +63,7 @@ class NoticeRepository {
     return markAsReadList;
   }
 
+  // 공지사항 작성
   Future<NoticeModel> createNotice({
     required String title,
     required String content,
